@@ -2,8 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#17365d">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta
+    name="theme-color"
+    content="#17365d"
+  >
+
   <title>理财净值观测</title>
 
   <style>
@@ -15,8 +24,12 @@
       margin: 0;
       background: #f5f7fb;
       color: #1f2937;
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
-        "Microsoft YaHei", sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
     }
 
     main {
@@ -28,9 +41,16 @@
     .header {
       padding: 21px 18px;
       color: white;
-      background: linear-gradient(135deg, #17365d, #2f75b5);
+      background:
+        linear-gradient(
+          135deg,
+          #17365d,
+          #2f75b5
+        );
       border-radius: 18px;
-      box-shadow: 0 8px 22px rgba(23, 54, 93, 0.18);
+      box-shadow:
+        0 8px 22px
+        rgba(23, 54, 93, 0.18);
     }
 
     h1 {
@@ -54,7 +74,9 @@
       background: white;
       border: 1px solid #eef1f5;
       border-radius: 16px;
-      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+      box-shadow:
+        0 3px 12px
+        rgba(15, 23, 42, 0.06);
     }
 
     .product-name {
@@ -96,6 +118,10 @@
       color: #c62828;
     }
 
+    .negative {
+      color: #16803c;
+    }
+
     .nav-date {
       margin-top: 11px;
       color: #6b7280;
@@ -109,16 +135,6 @@
       font-size: 12px;
       line-height: 1.65;
     }
-
-    @media (max-width: 420px) {
-      .metrics {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .value {
-        font-size: 18px;
-      }
-    }
   </style>
 </head>
 
@@ -126,73 +142,133 @@
   <main>
     <section class="header">
       <h1>理财净值观测</h1>
-      <div class="update-time">数据日期：2026-10-26</div>
+
+      <div class="update-time">
+        数据日期：2026-10-26
+      </div>
     </section>
 
     <section class="product-list">
+      
+    <article class="card">
+      <div class="product-name">
+        天天金56号A
+      </div>
 
-      <article class="card">
-        <div class="product-name">天天金56号A</div>
-        <div class="product-code">份额代码：YJ01260608A</div>
+      <div class="product-code">
+        份额代码：
+        YJ01260608A
+      </div>
 
-        <div class="metrics">
-          <div class="metric">
-            <div class="label">单位净值</div>
-            <div class="value">1.001113</div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">
+            单位净值
           </div>
 
-          <div class="metric">
-            <div class="label">相邻净值点万收</div>
-            <div class="value positive">+2.62 元</div>
-          </div>
-        </div>
-
-        <div class="nav-date">净值日期：2026-10-26</div>
-      </article>
-
-      <article class="card">
-        <div class="product-name">诚享30天17A</div>
-        <div class="product-code">份额代码：YJ01260445A</div>
-
-        <div class="metrics">
-          <div class="metric">
-            <div class="label">单位净值</div>
-            <div class="value">1.006562</div>
-          </div>
-
-          <div class="metric">
-            <div class="label">相邻净值点万收</div>
-            <div class="value positive">+3.74 元</div>
+          <div class="value">
+            1.001113
           </div>
         </div>
 
-        <div class="nav-date">净值日期：2026-10-26</div>
-      </article>
-
-      <article class="card">
-        <div class="product-name">诚享7天29A</div>
-        <div class="product-code">份额代码：YJ01251204A</div>
-
-        <div class="metrics">
-          <div class="metric">
-            <div class="label">单位净值</div>
-            <div class="value">1.015398</div>
+        <div class="metric">
+          <div class="label">
+            相邻净值点万收
           </div>
 
-          <div class="metric">
-            <div class="label">相邻净值点万收</div>
-            <div class="value positive">+1.54 元</div>
+          <div class="value positive">
+            +2.62 元
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-date">
+        净值日期：2026-10-26
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="product-name">
+        诚享30天17A
+      </div>
+
+      <div class="product-code">
+        份额代码：
+        YJ01260445A
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">
+            单位净值
+          </div>
+
+          <div class="value">
+            1.006562
           </div>
         </div>
 
-        <div class="nav-date">净值日期：2026-10-26</div>
-      </article>
+        <div class="metric">
+          <div class="label">
+            相邻净值点万收
+          </div>
 
+          <div class="value positive">
+            +3.74 元
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-date">
+        净值日期：2026-10-26
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="product-name">
+        诚享7天29A
+      </div>
+
+      <div class="product-code">
+        份额代码：
+        YJ01251204A
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">
+            单位净值
+          </div>
+
+          <div class="value">
+            1.015398
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">
+            相邻净值点万收
+          </div>
+
+          <div class="value positive">
+            +1.54 元
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-date">
+        净值日期：2026-10-26
+      </div>
+    </article>
+    
     </section>
 
     <div class="notice">
-      数据来自公开披露渠道整理，仅用于个人查阅与对照，不构成投资建议。
-      请以产品管理人正式披露为准。“万收”表示相邻净值点每万元变化，
+      数据来自公开披露渠道整理，
+      仅用于个人查阅与对照，
+      不构成投资建议。
+      请以产品管理人正式披露为准。
+      “万收”表示相邻净值点每万元变化，
       两个净值点之间可能跨越多个自然日。
     </div>
   </main>
