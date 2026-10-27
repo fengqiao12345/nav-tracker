@@ -1,26 +1,26 @@
 {
-  "updated_at": "2026-10-26",
-  "products": [
-    {
-      "name": "天天金56号A",
-      "share_code": "YJ01260608A",
-      "nav_date": "2026-10-26",
-      "unit_nav": 1.001113,
-      "wan_return": 2.62
-    },
-    {
-      "name": "诚享30天17A",
-      "share_code": "YJ01260445A",
-      "nav_date": "2026-10-26",
-      "unit_nav": 1.006562,
-      "wan_return": 3.74
-    },
-    {
-      "name": "诚享7天29A",
-      "share_code": "YJ01251204A",
-      "nav_date": "2026-10-26",
-      "unit_nav": 1.015398,
-      "wan_return": 1.54
-    }
-  ]
+  "updated_at": "2026-10-26",
+  "products": [
+    {
+      "name": "天天金56号A",
+      "share_code": "YJ01260608A",
+      "nav_date": "2026-10-26",
+      "unit_nav": 1.001113,
+      "wan_return": 2.62
+    },
+    {
+      "name": "诚享30天17A",
+      "share_code": "YJ01260445A",
+      "nav_date": "2026-10-26",
+      "unit_nav": 1.006562,
+      "wan_return": 3.74
+    },
+    {
+      "name": "诚享7天29A",
+      "share_code": "YJ01251204A",
+      "nav_date": "2026-10-26",
+      "unit_nav": 1.015398,
+      "wan_return": 1.54
+    }
+  ]
 }
