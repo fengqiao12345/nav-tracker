@@ -137,7 +137,7 @@ def find_candidate_links(share_code):
         else:
             page_url = (
                 f"{BASE_URL}/xxpl/cpgg/jzgg/"
-                f"index{page_number}.html"
+                f"index{page_number + 1}.html"
             )
 
         try:
