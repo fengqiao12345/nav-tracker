@@ -29,13 +29,16 @@ jobs:
       - name: 安装运行组件
         run: pip install -r requirements.txt
 
-      - name: 获取并更新净值
+      - name: 更新理财净值
         run: python update_nav.py
+
+      - name: 更新北京银行新品
+        run: python update_new_products.py
 
       - name: 保存更新结果
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html nav_history.json
-          git diff --cached --quiet || git commit -m "自动更新理财净值"
+          git add index.html nav_history.json new_products.html bank_products_snapshot.json
+          git diff --cached --quiet || git commit -m "自动更新理财净值及新品"
           git push
