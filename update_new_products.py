@@ -32,8 +32,8 @@ OUTPUT_FILE = Path(
 
 MANAGER_NAME = "北银理财有限责任公司"
 
-# 新品页面保留最近30天监测到的产品
-DISPLAY_DAYS = 30
+# 新品页面保留最近7天监测到的产品
+DISPLAY_DAYS = 7
 
 # 每页查询100条，程序自动翻页
 PAGE_SIZE = 100
@@ -531,7 +531,7 @@ def escape_html(value):
 
 
 def get_recent_new_products(snapshot):
-    """读取最近30天发现的新品。"""
+    """读取最近7天发现的新品。"""
 
     cutoff_date = (
         date.today()
