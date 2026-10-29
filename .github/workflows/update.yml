@@ -2,7 +2,12 @@ name: 每天更新理财净值
 
 on:
   schedule:
-    - cron: "30 23 * * *"
+    # 北京时间每天08:00运行
+    - cron: "0 0 * * *"
+
+    # 北京时间每天10:00补查
+    - cron: "0 2 * * *"
+
   workflow_dispatch:
 
 permissions:
