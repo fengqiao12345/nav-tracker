@@ -35,7 +35,7 @@ INDEX_FILE = Path("index.html")
 # ==========================================
 
 class LegacySSLAdapter(HTTPAdapter):
-    """兼容部分银行网站使用的旧版SSL协商方式。"""
+    """兼容北京银行网站的旧版SSL协商方式。"""
 
     def create_ssl_context(self):
         context = ssl.create_default_context()
@@ -48,9 +48,7 @@ class LegacySSLAdapter(HTTPAdapter):
         context.options |= legacy_option
 
         try:
-            context.set_ciphers(
-                "DEFAULT@SECLEVEL=1"
-            )
+            context.set_ciphers("DEFAULT@SECLEVEL=1")
         except ssl.SSLError:
             pass
 
@@ -63,9 +61,7 @@ class LegacySSLAdapter(HTTPAdapter):
         block=False,
         **pool_kwargs,
     ):
-        pool_kwargs["ssl_context"] = (
-            self.create_ssl_context()
-        )
+        pool_kwargs["ssl_context"] = self.create_ssl_context()
 
         return super().init_poolmanager(
             connections,
@@ -79,9 +75,7 @@ class LegacySSLAdapter(HTTPAdapter):
         proxy,
         **proxy_kwargs,
     ):
-        proxy_kwargs["ssl_context"] = (
-            self.create_ssl_context()
-        )
+        proxy_kwargs["ssl_context"] = self.create_ssl_context()
 
         return super().proxy_manager_for(
             proxy,
@@ -105,34 +99,23 @@ SESSION.headers.update(
             "(KHTML, like Gecko) "
             "Chrome/130.0.0.0 Safari/537.36"
         ),
-        "Accept-Language": (
-            "zh-CN,zh;q=0.9,en;q=0.8"
-        ),
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
     }
 )
 
 
 # ==========================================
-# 读取产品清单
+# 产品清单
 # ==========================================
 
 def load_products():
-    """
-    从products.json读取所有启用产品。
-
-    后续新增北银理财产品时，
-    只需要修改products.json。
-    """
+    """读取products.json中所有启用产品。"""
 
     if not PRODUCTS_FILE.exists():
-        raise RuntimeError(
-            "没有找到 products.json"
-        )
+        raise RuntimeError("没有找到 products.json")
 
     products = json.loads(
-        PRODUCTS_FILE.read_text(
-            encoding="utf-8"
-        )
+        PRODUCTS_FILE.read_text(encoding="utf-8")
     )
 
     if not isinstance(products, list):
@@ -158,26 +141,17 @@ def load_products():
         ).strip()
 
         registration_code = str(
-            product.get(
-                "registration_code",
-                "",
-            )
+            product.get("registration_code", "")
         ).strip()
 
         if not name or not share_code:
-            print(
-                "跳过信息不完整的产品：",
-                product,
-            )
             continue
 
         enabled_products.append(
             {
                 "name": name,
                 "share_code": share_code,
-                "registration_code": (
-                    registration_code
-                ),
+                "registration_code": registration_code,
             }
         )
 
@@ -190,16 +164,11 @@ def load_products():
 
 
 # ==========================================
-# 读取已有历史数据
+# 历史数据
 # ==========================================
 
 def load_history():
-    """
-    优先读取nav_history.json。
-
-    首次运行时，从nav_data.json
-    建立初始历史记录。
-    """
+    """优先读取nav_history.json。"""
 
     if HISTORY_FILE.exists():
         history = json.loads(
@@ -227,23 +196,14 @@ def load_history():
         [],
     ):
         code = str(
-            product.get(
-                "share_code",
-                "",
-            )
+            product.get("share_code", "")
         ).strip()
 
         nav_date = str(
-            product.get(
-                "nav_date",
-                "",
-            )
+            product.get("nav_date", "")
         ).strip()
 
-        unit_nav = product.get(
-            "unit_nav"
-        )
-
+        unit_nav = product.get("unit_nav")
         wan_return = product.get(
             "wan_return",
             0,
@@ -270,11 +230,11 @@ def load_history():
 
 
 # ==========================================
-# 北京银行公开净值接口
+# 北京银行净值接口
 # ==========================================
 
 def prepare_session():
-    """访问公开净值页面，建立普通访问会话。"""
+    """访问公开净值页面建立普通会话。"""
 
     try:
         response = SESSION.get(
@@ -327,13 +287,12 @@ def get_nav_records(share_code):
     )
 
     response.raise_for_status()
+
     result = response.json()
 
     if result.get("code") != 0:
         print(
-            f"{share_code}：接口返回异常，"
-            f"code={result.get('code')}，"
-            f"message={result.get('message')}"
+            f"{share_code}：接口返回异常"
         )
         return []
 
@@ -346,17 +305,11 @@ def get_nav_records(share_code):
 
     for record in records:
         product_code = str(
-            record.get(
-                "prdcode",
-                "",
-            )
+            record.get("prdcode", "")
         ).strip()
 
         nav_date = str(
-            record.get(
-                "navTime",
-                "",
-            )
+            record.get("navTime", "")
         ).strip()
 
         nav_value = record.get("nav")
@@ -412,17 +365,12 @@ def get_nav_records(share_code):
             f"{latest['date']} "
             f"{latest['nav']}"
         )
-    else:
-        print(
-            f"{share_code}："
-            "北京银行接口未返回有效净值"
-        )
 
     return sorted_records
 
 
 # ==========================================
-# 合并历史并计算万收
+# 万收与历史合并
 # ==========================================
 
 def calculate_wan_return(
@@ -446,7 +394,7 @@ def merge_product_history(
     share_code,
     api_records,
 ):
-    """将接口数据合并到历史记录。"""
+    """合并历史净值并重新计算万收。"""
 
     current_records = history.setdefault(
         share_code,
@@ -512,12 +460,6 @@ def merge_product_history(
         merged_records
     ):
         if index == 0:
-            record["wan_return"] = float(
-                record.get(
-                    "wan_return",
-                    0,
-                )
-            )
             continue
 
         previous_nav = merged_records[
@@ -540,19 +482,17 @@ def merge_product_history(
             )
             changed = True
 
-    history[share_code] = (
-        merged_records
-    )
+    history[share_code] = merged_records
 
     return changed
 
 
 # ==========================================
-# 生成网页
+# 网页生成
 # ==========================================
 
 def escape_html(value):
-    """处理网页特殊字符。"""
+    """网页特殊字符处理。"""
 
     return (
         str(value)
@@ -568,7 +508,7 @@ def create_product_card(
     product,
     record,
 ):
-    """生成一个产品卡片。"""
+    """生成单只产品卡片。"""
 
     wan_return = float(
         record.get(
@@ -637,7 +577,7 @@ def render_index(
     products,
     history,
 ):
-    """根据产品清单自动生成网页。"""
+    """生成净值追踪首页。"""
 
     cards = []
     latest_dates = []
@@ -651,10 +591,6 @@ def render_index(
         )
 
         if not records:
-            print(
-                f"{product['name']}没有历史数据，"
-                "本次不显示"
-            )
             continue
 
         records.sort(
@@ -731,9 +667,6 @@ def render_index(
           #2f75b5
         );
       border-radius: 18px;
-      box-shadow:
-        0 8px 22px
-        rgba(23, 54, 93, 0.18);
     }}
 
     h1 {{
@@ -744,6 +677,33 @@ def render_index(
     .update-time {{
       font-size: 13px;
       opacity: 0.9;
+    }}
+
+    .page-nav {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }}
+
+    .page-nav a {{
+      padding: 11px;
+      border-radius: 11px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }}
+
+    .page-nav .current {{
+      background: #17365d;
+      color: white;
+    }}
+
+    .page-nav .new-products {{
+      background: white;
+      color: #17365d;
+      border: 1px solid #dce4ef;
     }}
 
     .product-list {{
@@ -759,7 +719,7 @@ def render_index(
       border-radius: 16px;
       box-shadow:
         0 3px 12px
-        rgba(15, 23, 42, 0.06);
+        rgba(15,23,42,0.06);
     }}
 
     .product-name {{
@@ -817,7 +777,6 @@ def render_index(
 
     .notice {{
       margin-top: 15px;
-      padding: 0 3px;
       color: #6b7280;
       font-size: 12px;
       line-height: 1.65;
@@ -831,19 +790,13 @@ def render_index(
 
     .image-actions button {{
       width: 100%;
-      padding: 13px 16px;
+      padding: 13px;
       border: 0;
       border-radius: 12px;
       background: #17365d;
       color: white;
       font-size: 16px;
       font-weight: 700;
-      cursor: pointer;
-    }}
-
-    .image-actions button:disabled {{
-      opacity: 0.65;
-      cursor: not-allowed;
     }}
 
     .image-result {{
@@ -858,15 +811,9 @@ def render_index(
     }}
 
     .image-result img {{
-      display: block;
       width: 100%;
       height: auto;
       border-radius: 12px;
-      box-shadow:
-        0 4px 18px
-        rgba(15, 23, 42, 0.15);
-      -webkit-touch-callout: default;
-      user-select: auto;
     }}
 
     .save-tip {{
@@ -877,37 +824,6 @@ def render_index(
       color: #7a4b00;
       text-align: center;
       font-size: 14px;
-      line-height: 1.6;
-    }}
-
-    @media (
-      prefers-color-scheme: dark
-    ) {{
-      body {{
-        background: #0f172a;
-        color: #f3f4f6;
-      }}
-
-      .card {{
-        background: #172033;
-        border-color: #253047;
-      }}
-
-      .metric {{
-        background: #202b40;
-      }}
-
-      .product-code,
-      .label,
-      .nav-date,
-      .notice {{
-        color: #a7b0c0;
-      }}
-
-      .save-tip {{
-        background: #3d3213;
-        color: #ffe7a3;
-      }}
     }}
   </style>
 
@@ -917,7 +833,9 @@ def render_index(
 </head>
 
 <body>
+
   <main id="capture-area">
+
     <section class="header">
       <h1>哪吒攒钱</h1>
 
@@ -927,97 +845,156 @@ def render_index(
       </div>
     </section>
 
+
+    <nav class="page-nav">
+
+      <a
+        class="current"
+        href="index.html">
+        净值追踪
+      </a>
+
+      <a
+        class="new-products"
+        href="new_products.html">
+        新品监测
+      </a>
+
+    </nav>
+
+
     <section class="product-list">
       {''.join(cards)}
     </section>
+
 
     <div class="notice">
       数据来自北京银行公开披露渠道，
       仅用于个人查阅与对照，
       不构成投资建议。
       请以产品管理人正式披露为准。
-      “万收”表示相邻净值点每万元变化，
-      两个净值点之间可能跨越多个自然日。
+      “万收”表示相邻净值点每万元变化。
     </div>
+
   </main>
 
+
   <div class="image-actions">
+
     <button
       type="button"
       id="make-image"
       onclick="makeLongImage()">
       生成长图
     </button>
+
   </div>
+
 
   <div
     id="image-result"
     class="image-result">
   </div>
 
+
   <script>
+
     async function makeLongImage() {{
+
       const button =
-        document.getElementById("make-image");
+        document.getElementById(
+          "make-image"
+        );
 
       const result =
-        document.getElementById("image-result");
+        document.getElementById(
+          "image-result"
+        );
 
-      if (typeof html2canvas !== "function") {{
-        result.classList.add("show");
+      if (
+        typeof html2canvas
+        !== "function"
+      ) {{
+        result.classList.add(
+          "show"
+        );
+
         result.innerHTML =
           '<div class="save-tip">'
-          + '长图组件加载失败，请刷新页面后重试。'
+          + '长图组件加载失败，请刷新后重试。'
           + '</div>';
+
         return;
       }}
 
       button.disabled = true;
-      button.textContent = "正在生成长图…";
 
-      result.classList.remove("show");
+      button.textContent =
+        "正在生成长图…";
+
+      result.classList.remove(
+        "show"
+      );
+
       result.innerHTML = "";
 
       try {{
-        const target =
-          document.getElementById("capture-area");
 
-        const canvas = await html2canvas(
-          target,
-          {{
-            backgroundColor: "#f5f7fb",
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            scrollX: 0,
-            scrollY: 0,
-            windowWidth:
-              document.documentElement.scrollWidth,
-            windowHeight:
-              document.documentElement.scrollHeight
-          }}
-        );
+        const target =
+          document.getElementById(
+            "capture-area"
+          );
+
+        const canvas =
+          await html2canvas(
+            target,
+            {{
+              backgroundColor:
+                "#f5f7fb",
+
+              scale: 2,
+
+              useCORS: true,
+
+              logging: false
+            }}
+          );
 
         const image =
-          document.createElement("img");
+          document.createElement(
+            "img"
+          );
 
         image.src =
-          canvas.toDataURL("image/png");
+          canvas.toDataURL(
+            "image/png"
+          );
 
         image.alt =
           "哪吒攒钱理财净值长图";
 
         const tip =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
-        tip.className = "save-tip";
+        tip.className =
+          "save-tip";
 
         tip.textContent =
-          "长按下方图片，选择“保存到照片”或“保存图片”";
+          "长按下方图片，选择保存到照片或保存图片";
 
-        result.appendChild(tip);
-        result.appendChild(image);
-        result.classList.add("show");
+        result.appendChild(
+          tip
+        );
+
+        result.appendChild(
+          image
+        );
+
+        result.classList.add(
+          "show"
+        );
 
         result.scrollIntoView(
           {{
@@ -1029,22 +1006,35 @@ def render_index(
         button.textContent =
           "重新生成长图";
 
-      }} catch (error) {{
-        result.classList.add("show");
+      }}
+
+      catch (error) {{
+
+        result.classList.add(
+          "show"
+        );
 
         result.innerHTML =
           '<div class="save-tip">'
-          + '长图生成失败，请刷新网页后重试。'
+          + '长图生成失败，请刷新后重试。'
           + '</div>';
 
         button.textContent =
           "重新生成长图";
 
-      }} finally {{
-        button.disabled = false;
       }}
+
+      finally {{
+
+        button.disabled =
+          false;
+
+      }}
+
     }}
+
   </script>
+
 </body>
 </html>
 """
@@ -1060,6 +1050,7 @@ def render_index(
 # ==========================================
 
 def main():
+
     products = load_products()
     history = load_history()
 
@@ -1069,43 +1060,57 @@ def main():
     updated_count = 0
 
     for product in products:
+
         name = product["name"]
         code = product["share_code"]
 
         print(
-            f"开始检查：{name} / {code}"
+            f"开始检查："
+            f"{name} / {code}"
         )
 
         try:
-            api_records = get_nav_records(
-                code
+
+            api_records = (
+                get_nav_records(
+                    code
+                )
             )
 
         except Exception as error:
+
             print(
                 f"{name}检查失败："
                 f"{type(error).__name__}: "
                 f"{error}"
             )
+
             continue
 
         if not api_records:
+
             print(
                 f"{name}未取得有效净值"
             )
+
             continue
 
         success_count += 1
 
-        changed = merge_product_history(
-            history,
-            code,
-            api_records,
+        changed = (
+            merge_product_history(
+                history,
+                code,
+                api_records,
+            )
         )
 
-        latest_record = api_records[-1]
+        latest_record = (
+            api_records[-1]
+        )
 
         if changed:
+
             updated_count += 1
 
             print(
@@ -1115,16 +1120,20 @@ def main():
             )
 
         else:
+
             print(
                 f"{name}暂无新净值"
             )
 
+
     if success_count == 0:
+
         raise RuntimeError(
             "所有产品均未成功取得"
             "北京银行真实净值，"
             "本次不更新网页"
         )
+
 
     HISTORY_FILE.write_text(
         json.dumps(
@@ -1135,16 +1144,17 @@ def main():
         encoding="utf-8",
     )
 
+
     render_index(
         products,
         history,
     )
 
+
     print(
-        f"执行完成：成功检查"
-        f"{success_count}只，"
-        f"新增或修正"
-        f"{updated_count}只"
+        f"执行完成："
+        f"成功检查{success_count}只，"
+        f"新增或修正{updated_count}只"
     )
 
 
