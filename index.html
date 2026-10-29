@@ -48,9 +48,6 @@
           #2f75b5
         );
       border-radius: 18px;
-      box-shadow:
-        0 8px 22px
-        rgba(23, 54, 93, 0.18);
     }
 
     h1 {
@@ -61,6 +58,33 @@
     .update-time {
       font-size: 13px;
       opacity: 0.9;
+    }
+
+    .page-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .page-nav a {
+      padding: 11px;
+      border-radius: 11px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .page-nav .current {
+      background: #17365d;
+      color: white;
+    }
+
+    .page-nav .new-products {
+      background: white;
+      color: #17365d;
+      border: 1px solid #dce4ef;
     }
 
     .product-list {
@@ -76,7 +100,7 @@
       border-radius: 16px;
       box-shadow:
         0 3px 12px
-        rgba(15, 23, 42, 0.06);
+        rgba(15,23,42,0.06);
     }
 
     .product-name {
@@ -134,7 +158,6 @@
 
     .notice {
       margin-top: 15px;
-      padding: 0 3px;
       color: #6b7280;
       font-size: 12px;
       line-height: 1.65;
@@ -148,19 +171,13 @@
 
     .image-actions button {
       width: 100%;
-      padding: 13px 16px;
+      padding: 13px;
       border: 0;
       border-radius: 12px;
       background: #17365d;
       color: white;
       font-size: 16px;
       font-weight: 700;
-      cursor: pointer;
-    }
-
-    .image-actions button:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
     }
 
     .image-result {
@@ -175,15 +192,9 @@
     }
 
     .image-result img {
-      display: block;
       width: 100%;
       height: auto;
       border-radius: 12px;
-      box-shadow:
-        0 4px 18px
-        rgba(15, 23, 42, 0.15);
-      -webkit-touch-callout: default;
-      user-select: auto;
     }
 
     .save-tip {
@@ -194,37 +205,6 @@
       color: #7a4b00;
       text-align: center;
       font-size: 14px;
-      line-height: 1.6;
-    }
-
-    @media (
-      prefers-color-scheme: dark
-    ) {
-      body {
-        background: #0f172a;
-        color: #f3f4f6;
-      }
-
-      .card {
-        background: #172033;
-        border-color: #253047;
-      }
-
-      .metric {
-        background: #202b40;
-      }
-
-      .product-code,
-      .label,
-      .nav-date,
-      .notice {
-        color: #a7b0c0;
-      }
-
-      .save-tip {
-        background: #3d3213;
-        color: #ffe7a3;
-      }
     }
   </style>
 
@@ -234,7 +214,9 @@
 </head>
 
 <body>
+
   <main id="capture-area">
+
     <section class="header">
       <h1>哪吒攒钱</h1>
 
@@ -243,6 +225,24 @@
         2026-10-28
       </div>
     </section>
+
+
+    <nav class="page-nav">
+
+      <a
+        class="current"
+        href="index.html">
+        净值追踪
+      </a>
+
+      <a
+        class="new-products"
+        href="new_products.html">
+        新品监测
+      </a>
+
+    </nav>
+
 
     <section class="product-list">
       
@@ -544,93 +544,134 @@
     
     </section>
 
+
     <div class="notice">
       数据来自北京银行公开披露渠道，
       仅用于个人查阅与对照，
       不构成投资建议。
       请以产品管理人正式披露为准。
-      “万收”表示相邻净值点每万元变化，
-      两个净值点之间可能跨越多个自然日。
+      “万收”表示相邻净值点每万元变化。
     </div>
+
   </main>
 
+
   <div class="image-actions">
+
     <button
       type="button"
       id="make-image"
       onclick="makeLongImage()">
       生成长图
     </button>
+
   </div>
+
 
   <div
     id="image-result"
     class="image-result">
   </div>
 
+
   <script>
+
     async function makeLongImage() {
+
       const button =
-        document.getElementById("make-image");
+        document.getElementById(
+          "make-image"
+        );
 
       const result =
-        document.getElementById("image-result");
+        document.getElementById(
+          "image-result"
+        );
 
-      if (typeof html2canvas !== "function") {
-        result.classList.add("show");
+      if (
+        typeof html2canvas
+        !== "function"
+      ) {
+        result.classList.add(
+          "show"
+        );
+
         result.innerHTML =
           '<div class="save-tip">'
-          + '长图组件加载失败，请刷新页面后重试。'
+          + '长图组件加载失败，请刷新后重试。'
           + '</div>';
+
         return;
       }
 
       button.disabled = true;
-      button.textContent = "正在生成长图…";
 
-      result.classList.remove("show");
+      button.textContent =
+        "正在生成长图…";
+
+      result.classList.remove(
+        "show"
+      );
+
       result.innerHTML = "";
 
       try {
-        const target =
-          document.getElementById("capture-area");
 
-        const canvas = await html2canvas(
-          target,
-          {
-            backgroundColor: "#f5f7fb",
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            scrollX: 0,
-            scrollY: 0,
-            windowWidth:
-              document.documentElement.scrollWidth,
-            windowHeight:
-              document.documentElement.scrollHeight
-          }
-        );
+        const target =
+          document.getElementById(
+            "capture-area"
+          );
+
+        const canvas =
+          await html2canvas(
+            target,
+            {
+              backgroundColor:
+                "#f5f7fb",
+
+              scale: 2,
+
+              useCORS: true,
+
+              logging: false
+            }
+          );
 
         const image =
-          document.createElement("img");
+          document.createElement(
+            "img"
+          );
 
         image.src =
-          canvas.toDataURL("image/png");
+          canvas.toDataURL(
+            "image/png"
+          );
 
         image.alt =
           "哪吒攒钱理财净值长图";
 
         const tip =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
-        tip.className = "save-tip";
+        tip.className =
+          "save-tip";
 
         tip.textContent =
-          "长按下方图片，选择“保存到照片”或“保存图片”";
+          "长按下方图片，选择保存到照片或保存图片";
 
-        result.appendChild(tip);
-        result.appendChild(image);
-        result.classList.add("show");
+        result.appendChild(
+          tip
+        );
+
+        result.appendChild(
+          image
+        );
+
+        result.classList.add(
+          "show"
+        );
 
         result.scrollIntoView(
           {
@@ -642,21 +683,34 @@
         button.textContent =
           "重新生成长图";
 
-      } catch (error) {
-        result.classList.add("show");
+      }
+
+      catch (error) {
+
+        result.classList.add(
+          "show"
+        );
 
         result.innerHTML =
           '<div class="save-tip">'
-          + '长图生成失败，请刷新网页后重试。'
+          + '长图生成失败，请刷新后重试。'
           + '</div>';
 
         button.textContent =
           "重新生成长图";
 
-      } finally {
-        button.disabled = false;
       }
+
+      finally {
+
+        button.disabled =
+          false;
+
+      }
+
     }
+
   </script>
+
 </body>
 </html>
