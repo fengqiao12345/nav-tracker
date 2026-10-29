@@ -6,16 +6,22 @@ from pathlib import Path
 import requests
 
 
-# ==============================
-# 基础设置
-# ==============================
+# ==========================================
+# 基础配置
+# ==========================================
 
-BASE_URL = "https://www.beijingbobwealth.com.cn"
+PAGE_URL = (
+    "https://bankofbeijing.com.cn/"
+    "personal/second/lcjz"
+    "?column=1549644340891176960"
+)
 
 API_URL = (
-    "https://www.beijingbobwealth.com.cn/"
-    "bylc-api/product/navindex"
+    "https://bankofbeijing.com.cn/"
+    "api/wealth/callJz"
 )
+
+TITLE_ID = "1549644340891176960"
 
 PRODUCTS_FILE = Path("products.json")
 SEED_FILE = Path("nav_data.json")
@@ -23,39 +29,61 @@ HISTORY_FILE = Path("nav_history.json")
 INDEX_FILE = Path("index.html")
 
 
-# 创建网络会话
 SESSION = requests.Session()
 
 SESSION.headers.update(
     {
         "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "Mozilla/5.0 "
+            "(Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 "
             "(KHTML, like Gecko) "
             "Chrome/130.0.0.0 Safari/537.36"
         ),
-        "Accept-Language": "zh-CN,zh;q=0.9",
+        "Accept-Language": (
+            "zh-CN,zh;q=0.9,en;q=0.8"
+        ),
     }
 )
 
 
-# ==============================
+# ==========================================
 # 读取产品清单
-# ==============================
+# ==========================================
 
 def load_products():
-    """从products.json读取启用的北银理财产品。"""
+    """
+    从 products.json 读取所有启用的产品。
+
+    以后新增北银理财产品，只需要修改 products.json，
+    不需要再改本程序。
+    """
 
     if not PRODUCTS_FILE.exists():
-        raise RuntimeError("没有找到 products.json")
+        raise RuntimeError(
+            "没有找到 products.json"
+        )
 
     products = json.loads(
-        PRODUCTS_FILE.read_text(encoding="utf-8")
+        PRODUCTS_FILE.read_text(
+            encoding="utf-8"
+        )
     )
+
+    if not isinstance(products, list):
+        raise RuntimeError(
+            "products.json 最外层必须是数组"
+        )
 
     enabled_products = []
 
     for product in products:
+        if not isinstance(product, dict):
+            print(
+                "跳过格式不正确的产品：",
+                product,
+            )
+            continue
 
         if not product.get("enabled", True):
             continue
@@ -69,43 +97,58 @@ def load_products():
         ).strip()
 
         registration_code = str(
-            product.get("registration_code", "")
+            product.get(
+                "registration_code",
+                "",
+            )
         ).strip()
 
         if not name or not share_code:
-            print("跳过信息不完整的产品：", product)
+            print(
+                "跳过名称或份额代码为空的产品：",
+                product,
+            )
             continue
 
         enabled_products.append(
             {
                 "name": name,
                 "share_code": share_code,
-                "registration_code": registration_code,
+                "registration_code": (
+                    registration_code
+                ),
             }
         )
 
     if not enabled_products:
         raise RuntimeError(
-            "products.json中没有启用的产品"
+            "products.json 中没有启用的产品"
         )
 
     return enabled_products
 
 
-# ==============================
-# 读取历史数据
-# ==============================
+# ==========================================
+# 读取已有历史数据
+# ==========================================
 
 def load_history():
     """
-    优先读取nav_history.json。
-    首次运行时，从nav_data.json建立初始历史记录。
+    优先读取 nav_history.json。
+
+    如果是首次运行，则从 nav_data.json 中
+    读取现有数据作为初始记录。
     """
 
     if HISTORY_FILE.exists():
-        return json.loads(
-            HISTORY_FILE.read_text(encoding="utf-8")
+        history = json.loads(
+            HISTORY_FILE.read_text(
+                encoding="utf-8"
+            )
         )
+
+        if isinstance(history, dict):
+            return history
 
     history = {}
 
@@ -113,88 +156,129 @@ def load_history():
         return history
 
     seed_data = json.loads(
-        SEED_FILE.read_text(encoding="utf-8")
+        SEED_FILE.read_text(
+            encoding="utf-8"
+        )
     )
 
-    for product in seed_data.get("products", []):
-
+    for product in seed_data.get(
+        "products",
+        [],
+    ):
         code = str(
-            product.get("share_code", "")
+            product.get(
+                "share_code",
+                "",
+            )
         ).strip()
 
         nav_date = str(
-            product.get("nav_date", "")
+            product.get(
+                "nav_date",
+                "",
+            )
         ).strip()
 
-        unit_nav = product.get("unit_nav")
-
-        wan_return = product.get(
-            "wan_return", 0
+        unit_nav = product.get(
+            "unit_nav"
         )
 
-        if not code or not nav_date:
-            continue
+        wan_return = product.get(
+            "wan_return",
+            0,
+        )
 
-        if unit_nav is None:
+        if (
+            not code
+            or not nav_date
+            or unit_nav in (None, "")
+        ):
             continue
 
         history[code] = [
             {
                 "date": nav_date,
                 "nav": float(unit_nav),
-                "wan_return": float(wan_return),
+                "wan_return": float(
+                    wan_return
+                ),
             }
         ]
 
     return history
 
 
-# ==============================
-# 调用北银理财真实净值接口
-# ==============================
+# ==========================================
+# 调用北京银行公开净值接口
+# ==========================================
 
 def prepare_session():
     """
-    先访问官网首页，让服务器建立普通公开访问会话。
-    不使用银行账户，不使用个人Cookie。
+    先访问北京银行公开净值查询页面，
+    建立普通网页访问会话。
+
+    不使用登录账号，也不使用个人信息。
     """
 
     try:
-        SESSION.get(
-            BASE_URL,
+        response = SESSION.get(
+            PAGE_URL,
             timeout=30,
         )
+
+        print(
+            "北京银行净值页面预访问：",
+            response.status_code,
+        )
+
     except Exception as error:
-        print("官网预访问未完成：", error)
+        print(
+            "页面预访问未完成：",
+            type(error).__name__,
+            error,
+        )
 
 
-def get_latest_nav(share_code):
+def get_nav_records(share_code):
     """
-    从北银理财公开接口获取某份额代码的最新净值。
+    从北京银行公开接口获取产品最近10个净值点。
+
+    返回格式：
+    [
+        {
+            "date": "2026-10-28",
+            "nav": 1.006702
+        },
+        ...
+    ]
     """
 
-    params = {
-        "noCache": int(time.time() * 1000),
+    payload = {
+        "pageNum": 1,
         "pageSize": 10,
-        "pageNumber": 1,
-        "KEY": share_code,
+        "titleId": TITLE_ID,
+        "prodCode": share_code,
+        "channel": 1,
+        "language": "CN",
     }
 
     headers = {
         "Accept": (
             "application/json, "
-            "text/javascript, */*; q=0.01"
+            "text/plain, */*"
         ),
-        "Referer": (
-            f"{BASE_URL}/xxpl/cpgg/"
-            "jzgg/index.html"
+        "Content-Type": (
+            "application/json"
         ),
-        "X-Requested-With": "XMLHttpRequest",
+        "Origin": (
+            "https://bankofbeijing.com.cn"
+        ),
+        "Referer": PAGE_URL,
     }
 
-    response = SESSION.get(
+    response = SESSION.post(
         API_URL,
-        params=params,
+        json=payload,
         headers=headers,
         timeout=30,
     )
@@ -203,93 +287,114 @@ def get_latest_nav(share_code):
 
     result = response.json()
 
-    if result.get("state") != "ok":
+    if result.get("code") != 0:
         print(
-            f"{share_code}：接口返回状态异常，"
-            f"state={result.get('state')}"
+            f"{share_code}：接口返回异常，"
+            f"code={result.get('code')}，"
+            f"message={result.get('message')}"
         )
-        return None
+        return []
 
-    data = result.get("data", {})
-    records = data.get("list", [])
-
-    if not records:
-        print(
-            f"{share_code}：接口未返回净值记录"
-        )
-        return None
+    records = (
+        result.get("data", {})
+        .get("records", [])
+    )
 
     valid_records = []
 
     for record in records:
-
         product_code = str(
-            record.get("PROD_CODE", "")
+            record.get(
+                "prdcode",
+                "",
+            )
         ).strip()
 
         nav_date = str(
-            record.get("NAV_DATE", "")
+            record.get(
+                "navTime",
+                "",
+            )
         ).strip()
 
-        nav_value = record.get("NAV")
+        nav_value = record.get("nav")
 
-        # 必须精确匹配份额代码
         if product_code != share_code:
             continue
 
-        if nav_value is None:
+        if nav_value in (None, ""):
             continue
 
-        # 日期必须是8位数字，例如20261026
         if not re.fullmatch(
             r"\d{8}",
             nav_date,
         ):
             continue
 
-        formatted_date = (
-            f"{nav_date[0:4]}-"
-            f"{nav_date[4:6]}-"
-            f"{nav_date[6:8]}"
-        )
+        try:
+            nav_number = float(nav_value)
+        except (TypeError, ValueError):
+            continue
+
+        if nav_number <= 0:
+            continue
 
         valid_records.append(
             {
-                "date": formatted_date,
-                "nav": float(nav_value),
+                "date": (
+                    f"{nav_date[0:4]}-"
+                    f"{nav_date[4:6]}-"
+                    f"{nav_date[6:8]}"
+                ),
+                "nav": nav_number,
             }
         )
 
-    if not valid_records:
-        print(
-            f"{share_code}："
-            "没有找到代码匹配的有效净值"
-        )
-        return None
+    # 去除同一天的重复记录
+    unique_records = {}
 
-    latest_record = max(
-        valid_records,
+    for record in valid_records:
+        unique_records[
+            record["date"]
+        ] = record
+
+    # 按日期从旧到新排列
+    sorted_records = sorted(
+        unique_records.values(),
         key=lambda item: item["date"],
     )
 
-    print(
-        f"{share_code}：取得净值 "
-        f"{latest_record['date']} "
-        f"{latest_record['nav']}"
-    )
+    if sorted_records:
+        latest = sorted_records[-1]
 
-    return latest_record
+        print(
+            f"{share_code}：取得北京银行净值 "
+            f"{latest['date']} "
+            f"{latest['nav']}"
+        )
+    else:
+        print(
+            f"{share_code}："
+            "北京银行接口未返回有效净值"
+        )
+
+    return sorted_records
 
 
-# ==============================
-# 计算万收并保存历史
-# ==============================
+# ==========================================
+# 合并历史并计算万收
+# ==========================================
 
 def calculate_wan_return(
     current_nav,
     previous_nav,
 ):
-    """计算相邻净值点每万元变化。"""
+    """
+    计算相邻两个净值点之间的每万元变化。
+
+    公式：
+    （本期净值 ÷ 上期净值 - 1）× 10000
+    """
 
     if previous_nav <= 0:
         return 0.0
@@ -301,96 +406,126 @@ def calculate_wan_return(
     return round(value, 2)
 
 
-def update_product_history(
+def merge_product_history(
     history,
     share_code,
-    latest_record,
+    api_records,
 ):
-    """将最新净值写入历史记录，避免重复。"""
+    """
+    将接口数据合并进历史记录。
 
-    records = history.setdefault(
+    支持：
+    1. 增加新的净值日期；
+    2. 修正同一天已存在的错误净值；
+    3. 自动重新计算相邻净值点万收。
+    """
+
+    current_records = history.setdefault(
         share_code,
         [],
     )
 
-    records.sort(
-        key=lambda item: item["date"]
-    )
+    record_map = {}
 
-    # 第一次加入的新产品
-    if not records:
-        records.append(
-            {
-                "date": latest_record["date"],
-                "nav": latest_record["nav"],
+    for record in current_records:
+        date_value = str(
+            record.get("date", "")
+        ).strip()
+
+        nav_value = record.get("nav")
+
+        if (
+            date_value
+            and nav_value not in (None, "")
+        ):
+            record_map[date_value] = {
+                "date": date_value,
+                "nav": float(nav_value),
+                "wan_return": float(
+                    record.get(
+                        "wan_return",
+                        0,
+                    )
+                ),
+            }
+
+    changed = False
+
+    for record in api_records:
+        date_value = record["date"]
+        nav_value = float(
+            record["nav"]
+        )
+
+        existing = record_map.get(
+            date_value
+        )
+
+        if existing is None:
+            record_map[date_value] = {
+                "date": date_value,
+                "nav": nav_value,
                 "wan_return": 0.0,
             }
-        )
 
-        return True
+            changed = True
 
-    previous_record = records[-1]
+        elif existing["nav"] != nav_value:
+            existing["nav"] = nav_value
+            changed = True
 
-    # 出现新的净值日期
-    if (
-        latest_record["date"]
-        > previous_record["date"]
+    merged_records = sorted(
+        record_map.values(),
+        key=lambda item: item["date"],
+    )
+
+    # 重新计算全部相邻净值点万收
+    for index, record in enumerate(
+        merged_records
     ):
-        wan_return = calculate_wan_return(
-            latest_record["nav"],
-            previous_record["nav"],
-        )
-
-        records.append(
-            {
-                "date": latest_record["date"],
-                "nav": latest_record["nav"],
-                "wan_return": wan_return,
-            }
-        )
-
-        return True
-
-    # 管理人修正了同一天的净值
-    if (
-        latest_record["date"]
-        == previous_record["date"]
-        and latest_record["nav"]
-        != previous_record["nav"]
-    ):
-
-        if len(records) >= 2:
-            earlier_nav = records[-2]["nav"]
-
-            wan_return = calculate_wan_return(
-                latest_record["nav"],
-                earlier_nav,
+        if index == 0:
+            # 最早记录没有前值，保留已有万收。
+            record["wan_return"] = float(
+                record.get(
+                    "wan_return",
+                    0,
+                )
             )
-        else:
-            wan_return = previous_record.get(
-                "wan_return",
-                0.0,
+            continue
+
+        previous_nav = merged_records[
+            index - 1
+        ]["nav"]
+
+        new_wan_return = (
+            calculate_wan_return(
+                record["nav"],
+                previous_nav,
             )
-
-        previous_record["nav"] = (
-            latest_record["nav"]
         )
 
-        previous_record["wan_return"] = (
-            wan_return
-        )
+        if (
+            record.get("wan_return")
+            != new_wan_return
+        ):
+            record["wan_return"] = (
+                new_wan_return
+            )
+            changed = True
 
-        return True
+    history[share_code] = (
+        merged_records
+    )
 
-    return False
+    return changed
 
 
-# ==============================
-# 自动生成手机网页
-# ==============================
+# ==========================================
+# 生成网页
+# ==========================================
 
 def escape_html(value):
-    """处理产品名称中的特殊字符。"""
+    """防止特殊字符影响网页结构。"""
 
     return (
         str(value)
@@ -398,6 +533,7 @@ def escape_html(value):
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace('"', "&quot;")
+        .replace("'", "&#39;")
     )
 
 
@@ -405,18 +541,28 @@ def create_product_card(
     product,
     record,
 ):
-    """生成一只产品的网页卡片。"""
+    """生成单个产品卡片。"""
 
     wan_return = float(
-        record.get("wan_return", 0)
+        record.get(
+            "wan_return",
+            0,
+        )
     )
 
-    if wan_return >= 0:
+    if wan_return > 0:
         return_class = "positive"
-        return_text = f"+{wan_return:.2f} 元"
-    else:
+        return_text = (
+            f"+{wan_return:.2f} 元"
+        )
+    elif wan_return < 0:
         return_class = "negative"
-        return_text = f"{wan_return:.2f} 元"
+        return_text = (
+            f"{wan_return:.2f} 元"
+        )
+    else:
+        return_class = "neutral"
+        return_text = "0.00 元"
 
     return f"""
     <article class="card">
@@ -462,19 +608,26 @@ def render_index(
     products,
     history,
 ):
-    """根据产品清单自动生成完整网页。"""
+    """
+    自动生成完整网页。
+
+    产品数量由 products.json 决定，
+    不限制只能显示3只。
+    """
 
     cards = []
     latest_dates = []
 
     for product in products:
-
         code = product["share_code"]
-        records = history.get(code, [])
+        records = history.get(
+            code,
+            [],
+        )
 
         if not records:
             print(
-                f"{product['name']}没有历史记录，"
+                f"{product['name']}没有有效历史数据，"
                 "本次不显示"
             )
             continue
@@ -518,7 +671,7 @@ def render_index(
     content="#17365d"
   >
 
-  <title>理财净值观测</title>
+  <title>哪吒攒钱买天官</title>
 
   <style>
     * {{
@@ -627,6 +780,10 @@ def render_index(
       color: #16803c;
     }}
 
+    .neutral {{
+      color: #6b7280;
+    }}
+
     .nav-date {{
       margin-top: 11px;
       color: #6b7280;
@@ -640,16 +797,42 @@ def render_index(
       font-size: 12px;
       line-height: 1.65;
     }}
+
+    @media (
+      prefers-color-scheme: dark
+    ) {{
+      body {{
+        background: #0f172a;
+        color: #f3f4f6;
+      }}
+
+      .card {{
+        background: #172033;
+        border-color: #253047;
+      }}
+
+      .metric {{
+        background: #202b40;
+      }}
+
+      .product-code,
+      .label,
+      .nav-date,
+      .notice {{
+        color: #a7b0c0;
+      }}
+    }}
   </style>
 </head>
 
 <body>
   <main>
     <section class="header">
-      <h1>理财净值观测</h1>
+      <h1>哪吒攒钱买天官</h1>
 
       <div class="update-time">
-        数据日期：{overall_date}
+        理财净值追踪页 ｜ 数据日期：
+        {overall_date}
       </div>
     </section>
 
@@ -658,7 +841,7 @@ def render_index(
     </section>
 
     <div class="notice">
-      数据来自公开披露渠道整理，
+      数据来自北京银行公开披露渠道，
       仅用于个人查阅与对照，
       不构成投资建议。
       请以产品管理人正式披露为准。
@@ -676,9 +859,9 @@ def render_index(
     )
 
 
-# ==============================
+# ==========================================
 # 主程序
-# ==============================
+# ==========================================
 
 def main():
     products = load_products()
@@ -690,7 +873,6 @@ def main():
     updated_count = 0
 
     for product in products:
-
         name = product["name"]
         code = product["share_code"]
 
@@ -699,16 +881,18 @@ def main():
         )
 
         try:
-            latest_record = get_latest_nav(code)
-
+            api_records = get_nav_records(
+                code
+            )
         except Exception as error:
             print(
                 f"{name}检查失败："
-                f"{type(error).__name__}: {error}"
+                f"{type(error).__name__}: "
+                f"{error}"
             )
             continue
 
-        if not latest_record:
+        if not api_records:
             print(
                 f"{name}未取得有效净值"
             )
@@ -716,11 +900,13 @@ def main():
 
         success_count += 1
 
-        changed = update_product_history(
+        changed = merge_product_history(
             history,
             code,
-            latest_record,
+            api_records,
         )
+
+        latest_record = api_records[-1]
 
         if changed:
             updated_count += 1
@@ -735,11 +921,12 @@ def main():
                 f"{name}暂无新净值"
             )
 
-    # 三只产品全部失败时明确报错，
-    # 不生成网页，也不覆盖现有正确数据。
+    # 所有产品均失败时明确报错，
+    # 不覆盖原有正确网页。
     if success_count == 0:
         raise RuntimeError(
-            "所有产品均未成功取得真实净值，"
+            "所有产品均未成功取得"
+            "北京银行真实净值，"
             "本次不更新网页"
         )
 
