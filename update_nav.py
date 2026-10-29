@@ -685,7 +685,7 @@ def render_index(
     content="#17365d"
   >
 
-  <title>哪吒攒钱买天官</title>
+  <title>哪吒攒钱</title>
 
   <style>
     * {{
@@ -842,7 +842,7 @@ def render_index(
 <body>
   <main>
     <section class="header">
-      <h1>哪吒攒钱买天官</h1>
+      <h1>哪吒攒钱</h1>
 
       <div class="update-time">
         哪吒攒钱 ｜ 数据日期：
