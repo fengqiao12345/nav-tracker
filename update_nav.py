@@ -1,6 +1,7 @@
 import json
 import re
 import ssl
+from datetime import date, timedelta
 from pathlib import Path
 
 import requests
@@ -204,6 +205,7 @@ def load_history():
         ).strip()
 
         unit_nav = product.get("unit_nav")
+
         wan_return = product.get(
             "wan_return",
             0,
@@ -256,11 +258,16 @@ def prepare_session():
 
 
 def get_nav_records(share_code):
-    """获取指定产品最近10个净值点。"""
+    """
+    获取指定产品最近30个净值点。
+
+    30条主要用于覆盖7/14个自然日，
+    包括周末及较长节假日。
+    """
 
     payload = {
         "pageNum": 1,
-        "pageSize": 10,
+        "pageSize": 30,
         "titleId": TITLE_ID,
         "prodCode": share_code,
         "channel": 1,
@@ -370,7 +377,7 @@ def get_nav_records(share_code):
 
 
 # ==========================================
-# 万收与历史合并
+# 万收计算
 # ==========================================
 
 def calculate_wan_return(
@@ -388,6 +395,94 @@ def calculate_wan_return(
 
     return round(value, 2)
 
+
+def calculate_daily_average(
+    records,
+    days,
+):
+    """
+    按自然日计算7日/14日日均万收。
+
+    以最新净值日为期末。
+
+    例如最新日期为10月28日：
+    7日日均使用10月21日或之前最近一次净值
+    作为期初净值。
+
+    日均万收 =
+    （期末净值 / 期初净值 - 1）
+    × 10000 / 自然日数
+    """
+
+    if not records:
+        return None
+
+    sorted_records = sorted(
+        records,
+        key=lambda item: item["date"],
+    )
+
+    latest = sorted_records[-1]
+
+    try:
+        latest_date = date.fromisoformat(
+            latest["date"]
+        )
+    except ValueError:
+        return None
+
+    baseline_date = (
+        latest_date
+        - timedelta(days=days)
+    )
+
+    baseline_record = None
+
+    for record in sorted_records:
+        try:
+            record_date = date.fromisoformat(
+                record["date"]
+            )
+        except ValueError:
+            continue
+
+        if record_date <= baseline_date:
+            baseline_record = record
+        else:
+            break
+
+    # 历史不足，不显示假数据
+    if baseline_record is None:
+        return None
+
+    latest_nav = float(
+        latest["nav"]
+    )
+
+    baseline_nav = float(
+        baseline_record["nav"]
+    )
+
+    if baseline_nav <= 0:
+        return None
+
+    total_wan_return = (
+        latest_nav / baseline_nav - 1
+    ) * 10000
+
+    daily_average = (
+        total_wan_return / days
+    )
+
+    return round(
+        daily_average,
+        2,
+    )
+
+
+# ==========================================
+# 合并历史
+# ==========================================
 
 def merge_product_history(
     history,
@@ -482,13 +577,15 @@ def merge_product_history(
             )
             changed = True
 
-    history[share_code] = merged_records
+    history[share_code] = (
+        merged_records
+    )
 
     return changed
 
 
 # ==========================================
-# 网页生成
+# 网页工具
 # ==========================================
 
 def escape_html(value):
@@ -504,34 +601,90 @@ def escape_html(value):
     )
 
 
+def format_return(value):
+    """格式化万收数值及颜色。"""
+
+    if value is None:
+        return (
+            "neutral",
+            "--",
+        )
+
+    if value > 0:
+        return (
+            "positive",
+            f"+{value:.2f} 元",
+        )
+
+    if value < 0:
+        return (
+            "negative",
+            f"{value:.2f} 元",
+        )
+
+    return (
+        "neutral",
+        "0.00 元",
+    )
+
+
 def create_product_card(
     product,
-    record,
+    records,
 ):
     """生成单只产品卡片。"""
 
+    if not records:
+        return ""
+
+    records = sorted(
+        records,
+        key=lambda item: item["date"],
+    )
+
+    latest_record = records[-1]
+
     wan_return = float(
-        record.get(
+        latest_record.get(
             "wan_return",
             0,
         )
     )
 
-    if wan_return > 0:
-        return_class = "positive"
-        return_text = (
-            f"+{wan_return:.2f} 元"
+    avg_7d = (
+        calculate_daily_average(
+            records,
+            7,
         )
+    )
 
-    elif wan_return < 0:
-        return_class = "negative"
-        return_text = (
-            f"{wan_return:.2f} 元"
+    avg_14d = (
+        calculate_daily_average(
+            records,
+            14,
         )
+    )
 
-    else:
-        return_class = "neutral"
-        return_text = "0.00 元"
+    (
+        return_class,
+        return_text,
+    ) = format_return(
+        wan_return
+    )
+
+    (
+        avg_7d_class,
+        avg_7d_text,
+    ) = format_return(
+        avg_7d
+    )
+
+    (
+        avg_14d_class,
+        avg_14d_text,
+    ) = format_return(
+        avg_14d
+    )
 
     return f"""
     <article class="card">
@@ -545,33 +698,59 @@ def create_product_card(
       </div>
 
       <div class="metrics">
+
         <div class="metric">
           <div class="label">
             单位净值
           </div>
 
           <div class="value">
-            {float(record["nav"]):.6f}
+            {float(latest_record["nav"]):.6f}
           </div>
         </div>
 
         <div class="metric">
           <div class="label">
-            相邻净值点万收
+            当日万收
           </div>
 
           <div class="value {return_class}">
             {return_text}
           </div>
         </div>
+
+        <div class="metric">
+          <div class="label">
+            7日日均万收
+          </div>
+
+          <div class="value {avg_7d_class}">
+            {avg_7d_text}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">
+            14日日均万收
+          </div>
+
+          <div class="value {avg_14d_class}">
+            {avg_14d_text}
+          </div>
+        </div>
+
       </div>
 
       <div class="nav-date">
-        净值日期：{record["date"]}
+        净值日期：{latest_record["date"]}
       </div>
     </article>
     """
 
+
+# ==========================================
+# 生成净值首页
+# ==========================================
 
 def render_index(
     products,
@@ -583,7 +762,9 @@ def render_index(
     latest_dates = []
 
     for product in products:
-        code = product["share_code"]
+        code = product[
+            "share_code"
+        ]
 
         records = history.get(
             code,
@@ -597,17 +778,15 @@ def render_index(
             key=lambda item: item["date"]
         )
 
-        latest_record = records[-1]
-
         cards.append(
             create_product_card(
                 product,
-                latest_record,
+                records,
             )
         )
 
         latest_dates.append(
-            latest_record["date"]
+            records[-1]["date"]
         )
 
     if not cards:
@@ -615,7 +794,9 @@ def render_index(
             "没有可用于生成网页的产品数据"
         )
 
-    overall_date = max(latest_dates)
+    overall_date = max(
+        latest_dates
+    )
 
     html = f"""<!doctype html>
 <html lang="zh-CN">
@@ -814,6 +995,8 @@ def render_index(
       width: 100%;
       height: auto;
       border-radius: 12px;
+      -webkit-touch-callout: default;
+      user-select: auto;
     }}
 
     .save-tip {{
@@ -845,7 +1028,6 @@ def render_index(
       </div>
     </section>
 
-
     <nav class="page-nav">
 
       <a
@@ -862,22 +1044,20 @@ def render_index(
 
     </nav>
 
-
     <section class="product-list">
       {''.join(cards)}
     </section>
-
 
     <div class="notice">
       数据来自北京银行公开披露渠道，
       仅用于个人查阅与对照，
       不构成投资建议。
       请以产品管理人正式披露为准。
-      “万收”表示相邻净值点每万元变化。
+      “当日万收”为相邻净值点每万元变化；
+      “7日/14日日均万收”按自然日计算。
     </div>
 
   </main>
-
 
   <div class="image-actions">
 
@@ -890,12 +1070,10 @@ def render_index(
 
   </div>
 
-
   <div
     id="image-result"
     class="image-result">
   </div>
-
 
   <script>
 
@@ -951,11 +1129,8 @@ def render_index(
             {{
               backgroundColor:
                 "#f5f7fb",
-
               scale: 2,
-
               useCORS: true,
-
               logging: false
             }}
           );
