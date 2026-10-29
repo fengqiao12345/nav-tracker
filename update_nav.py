@@ -845,7 +845,7 @@ def render_index(
       <h1>哪吒攒钱买天官</h1>
 
       <div class="update-time">
-        理财净值追踪页 ｜ 数据日期：
+        哪吒攒钱 ｜ 数据日期：
         {overall_date}
       </div>
     </section>
