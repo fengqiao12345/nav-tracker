@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>哪吒攒钱｜收益看板</title>
+
+<style>
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:#f5f7fb;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+.header{
+    background:linear-gradient(135deg,#17365d,#2f75b5);
+    color:white;
+    padding:20px;
+    border-radius:16px;
+}
+
+.nav{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+}
+
+.nav a{
+    text-decoration:none;
+    padding:10px 16px;
+    border-radius:10px;
+    font-weight:700;
+}
+
+.current{
+    background:#17365d;
+    color:white;
+}
+
+.other{
+    background:white;
+    color:#17365d;
+    border:1px solid #dce4ef;
+}
+
+.table-box{
+    margin-top:20px;
+    background:white;
+    border-radius:16px;
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#17365d;
+    color:white;
+    padding:12px;
+    text-align:center;
+}
+
+td{
+    padding:12px;
+    text-align:center;
+    border-bottom:1px solid #eef1f5;
+}
+
+tr:nth-child(even){
+    background:#f8fafc;
+}
+
+.red{
+    color:#c62828;
+    font-weight:700;
+}
+
+.green{
+    color:#16803c;
+    font-weight:700;
+}
+
+.footer{
+    margin-top:15px;
+    color:#666;
+    font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>哪吒攒钱｜收益看板</h1>
+<div>收益比较专用页面（后续接自动数据）</div>
+</div>
+
+<div class="nav">
+<a class="other" href="index.html">净值追踪</a>
+<a class="other" href="new_products.html">新品监测</a>
+<a class="current" href="dashboard.html">收益看板</a>
+</div>
+
+<div class="table-box">
+
+<table>
+
+<thead>
+<tr>
+<th>产品</th>
+<th>日期</th>
+<th>单位净值</th>
+<th>当日万收</th>
+<th>7日均</th>
+<th>14日均</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>天天金56号A</td>
+<td>10-28</td>
+<td>1.001289</td>
+<td class="red">0.94</td>
+<td class="red">0.90</td>
+<td class="red">0.92</td>
+</tr>
+
+<tr>
+<td>诚享30天17A</td>
+<td>10-28</td>
+<td>1.006702</td>
+<td class="red">0.59</td>
+<td class="red">1.01</td>
+<td class="red">1.51</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="footer">
+当前为页面样式验证版，后续接入自动数据和排序功能。
+</div>
+
+</div>
+
+</body>
+</html>
