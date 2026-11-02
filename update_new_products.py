@@ -1346,9 +1346,12 @@ def render_new_products_page(
           净值追踪
         </a>
 
-        new_products.html
-          新品监测
-        </a>
+<a
+  class="current"
+  href="new_products.html">
+  新品监测
+</a>
+
       </nav>
 
       <section class="list">
