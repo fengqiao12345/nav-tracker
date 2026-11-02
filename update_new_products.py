@@ -1,4 +1,5 @@
 import hashlib
+import io
 import json
 import re
 from datetime import date, datetime, timedelta
@@ -14,13 +15,9 @@ from pypdf import PdfReader
 # 基础配置
 # ==========================================
 
-BASE_URL = (
-    "https://www.beijingbobwealth.com.cn"
-)
+BASE_URL = "https://www.beijingbobwealth.com.cn"
 
-ANNOUNCEMENT_PATH = (
-    "/xxpl/cpgg/fxgg/"
-)
+ANNOUNCEMENT_PATH = "/xxpl/cpgg/fxgg/"
 
 ANNOUNCEMENT_PAGE = (
     BASE_URL
@@ -28,7 +25,6 @@ ANNOUNCEMENT_PAGE = (
     + "index.html"
 )
 
-# 使用新的快照文件，避免与旧的北京银行产品快照混淆
 SNAPSHOT_FILE = Path(
     "bob_issuance_snapshot.json"
 )
@@ -39,10 +35,10 @@ OUTPUT_FILE = Path(
 
 MANAGER_NAME = "北银理财有限责任公司"
 
-# 页面展示最近7天发布或发现的新品
+# 页面显示最近7天发布或发现的新品
 DISPLAY_DAYS = 7
 
-# 每次读取发行公告最近3页
+# 每次检查最近3页发行公告
 FETCH_PAGES = 3
 
 
@@ -65,11 +61,11 @@ SESSION.headers.update(
 
 
 # ==========================================
-# 网页读取与公告解析
+# 网页及公告解析
 # ==========================================
 
 def normalize_text(value):
-    """清理网页文字中的空格和换行。"""
+    """清理文字中的多余空格和换行。"""
 
     return " ".join(
         str(value or "").split()
@@ -94,7 +90,7 @@ def build_page_url(page_number):
 
 
 def prepare_session():
-    """访问北银理财发行公告首页。"""
+    """预访问北银理财发行公告首页。"""
 
     response = SESSION.get(
         ANNOUNCEMENT_PAGE,
@@ -105,7 +101,9 @@ def prepare_session():
                 "application/xml;q=0.9,"
                 "*/*;q=0.8"
             ),
-            "Referer": BASE_URL + "/",
+            "Referer": (
+                BASE_URL + "/"
+            ),
         },
         timeout=30,
     )
@@ -123,7 +121,7 @@ def extract_announcement_date(
     nearby_text,
     href,
 ):
-    """从标题、周边文字或链接中提取公告日期。"""
+    """从标题、周边文字和链接中提取日期。"""
 
     combined_text = (
         f"{title} "
@@ -154,15 +152,9 @@ def extract_announcement_date(
         )
 
         try:
-            parsed_date = (
-                date.fromisoformat(
-                    normalized_value
-                )
-            )
-
-            return (
-                parsed_date.isoformat()
-            )
+            return date.fromisoformat(
+                normalized_value
+            ).isoformat()
 
         except ValueError:
             continue
@@ -195,11 +187,9 @@ def clean_product_name(title):
         name,
     )
 
-    name = name.strip(
+    return name.strip(
         " _-—"
     )
-
-    return name
 
 
 def extract_product_code(
@@ -207,10 +197,10 @@ def extract_product_code(
     href,
 ):
     """
-    尝试提取产品代码。
+    从标题或链接中提取产品代码。
 
-    如果公告标题和链接中没有销售代码，
-    使用公告链接生成稳定编号。
+    没有公开销售代码时，
+    根据公告链接生成稳定标识。
     """
 
     combined_text = (
@@ -260,14 +250,15 @@ def extract_holding_period(name):
 
     return "-"
 
+
 def extract_fundraising_scale(
     pdf_url,
 ):
     """
-    从公告PDF中提取产品募集规模。
+    从PDF正文中提取产品募集规模。
 
-    如果公告未披露实际募集规模，
-    返回“未披露”。
+    发行公告未披露募集规模时，
+    页面显示“未披露”。
     """
 
     if not pdf_url:
@@ -280,71 +271,50 @@ def extract_fundraising_scale(
                 "Referer": (
                     BASE_URL + "/"
                 ),
-                "User-Agent": (
-                    "Mozilla/5.0 "
-                    "(Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 "
-                    "(KHTML, like Gecko) "
-                    "Chrome/130.0.0.0 Safari/537.36"
-                ),
             },
             timeout=45,
         )
 
         response.raise_for_status()
 
-        pdf_file = Path(
-            "temp_announcement.pdf"
-        )
-
-        pdf_file.write_bytes(
-            response.content
-        )
-
         reader = PdfReader(
-            str(pdf_file)
+            io.BytesIO(
+                response.content
+            )
         )
 
         text_parts = []
 
-        # 一般目标信息在前几页，
-        # 最多读取前6页，避免运行过慢
+        # 通常关键信息在前几页
         for page in reader.pages[:6]:
-            page_text = (
+            text_parts.append(
                 page.extract_text()
                 or ""
             )
 
-            text_parts.append(
-                page_text
-            )
-
-        try:
-            pdf_file.unlink()
-        except OSError:
-            pass
-
-        full_text = " ".join(
-            " ".join(
-                text_parts
-            ).split()
+        full_text = normalize_text(
+            " ".join(text_parts)
         )
 
         patterns = (
-            r"产品募集规模"
-            r"[\s：:]*"
-            r"([0-9,，.]+)"
-            r"\s*(亿元|万元|元)",
-
-            r"募集规模"
-            r"[\s：:]*"
-            r"([0-9,，.]+)"
-            r"\s*(亿元|万元|元)",
-
-            r"份额募集规模"
-            r"[\s：:]*"
-            r"([0-9,，.]+)"
-            r"\s*(亿元|万元|元)",
+            (
+                r"产品募集规模"
+                r"[\s：:]*"
+                r"([0-9,，.]+)"
+                r"\s*(亿元|万元|元)"
+            ),
+            (
+                r"份额募集规模"
+                r"[\s：:]*"
+                r"([0-9,，.]+)"
+                r"\s*(亿元|万元|元)"
+            ),
+            (
+                r"募集规模"
+                r"[\s：:]*"
+                r"([0-9,，.]+)"
+                r"\s*(亿元|万元|元)"
+            ),
         )
 
         for pattern in patterns:
@@ -365,8 +335,6 @@ def extract_fundraising_scale(
 
             return f"{number}{unit}"
 
-        return "未披露"
-
     except Exception as error:
         print(
             "募集规模提取失败："
@@ -374,34 +342,7 @@ def extract_fundraising_scale(
             f"{error}"
         )
 
-        return "未披露"
-def is_rmb_issuance(title):
-    """识别人民币理财产品发行公告。"""
-
-    text = normalize_text(
-        title
-    ).upper()
-
-    if "发行公告" not in text:
-        return False
-
-    if "理财产品" not in text:
-        return False
-
-    dollar_words = (
-        "美元",
-        "USD",
-        "现钞",
-        "现汇",
-    )
-
-    if any(
-        word.upper() in text
-        for word in dollar_words
-    ):
-        return False
-
-    return True
+    return "未披露"
 
 
 def fetch_announcement_page(
@@ -432,7 +373,6 @@ def fetch_announcement_page(
 
     response.raise_for_status()
 
-    # 北银理财网页使用UTF-8编码
     response.encoding = "utf-8"
 
     soup = BeautifulSoup(
@@ -465,8 +405,11 @@ def fetch_announcement_page(
             href
         )
 
-        # 只处理PDF发行公告
-        if ".pdf" not in decoded_href.lower():
+        # 只处理PDF公告
+        if (
+            ".pdf"
+            not in decoded_href.lower()
+        ):
             continue
 
         link_text = normalize_text(
@@ -476,7 +419,6 @@ def fetch_announcement_page(
             )
         )
 
-        # 标题可能放在父级元素中
         parent_text = ""
 
         if link.parent:
@@ -487,17 +429,18 @@ def fetch_announcement_page(
                 )
             )
 
-        # 如果父级文字仍不完整，再读取上一级
         grandparent_text = ""
 
         if (
             link.parent
             and link.parent.parent
         ):
-            grandparent_text = normalize_text(
-                link.parent.parent.get_text(
-                    " ",
-                    strip=True,
+            grandparent_text = (
+                normalize_text(
+                    link.parent.parent.get_text(
+                        " ",
+                        strip=True,
+                    )
                 )
             )
 
@@ -508,18 +451,17 @@ def fetch_announcement_page(
             f"{decoded_href}"
         )
 
-        # 必须是发行公告
         if "发行公告" not in combined_text:
             continue
 
-        # 必须与理财产品有关
         if (
-            "理财产品" not in combined_text
-            and "理财管理计划" not in combined_text
+            "理财产品"
+            not in combined_text
+            and "理财管理计划"
+            not in combined_text
         ):
             continue
 
-        # 排除美元产品
         upper_text = combined_text.upper()
 
         if any(
@@ -533,37 +475,32 @@ def fetch_announcement_page(
         ):
             continue
 
-        # 优先使用网页中的可见标题
-        title = link_text
+        file_title = (
+            decoded_href
+            .split("/")[-1]
+            .replace(".pdf", "")
+        )
+
+        title = max(
+            (
+                link_text,
+                parent_text,
+                file_title,
+            ),
+            key=len,
+        )
 
         if (
-            len(parent_text)
-            > len(title)
+            "发行公告" not in title
+            and "发行公告"
+            in file_title
         ):
-            title = parent_text
+            title = file_title
 
-        # 可见标题为空时，从PDF文件名获取
-        if not title:
-            title = (
-                decoded_href
-                .split("/")[-1]
-                .replace(".pdf", "")
+        product_name = (
+            clean_product_name(
+                title
             )
-
-        # 如果标题中不包含发行公告，
-        # 使用解码后的PDF文件名
-        if "发行公告" not in title:
-            file_title = (
-                decoded_href
-                .split("/")[-1]
-                .replace(".pdf", "")
-            )
-
-            if "发行公告" in file_title:
-                title = file_title
-
-        product_name = clean_product_name(
-            title
         )
 
         announcement_date = (
@@ -590,24 +527,18 @@ def fetch_announcement_page(
                     product_name
                 )
             ),
-            "subscribe_type": (
-                "发行公告"
-            ),
-            "first_amount": "-",
-            "risk_name": "-",
             "product_type": (
                 "人民币理财产品"
             ),
-            "income_rate": "",
             "announcement_date": (
                 announcement_date
             ),
-                        "fundraising_scale": (
+            "announcement_url": href,
+            "fundraising_scale": (
                 extract_fundraising_scale(
                     href
                 )
             ),
-            "announcement_url": href,
         }
 
     print(
@@ -619,12 +550,9 @@ def fetch_announcement_page(
 
     return products
 
-def fetch_all_bob_products():
-    """
-    读取北银理财发行公告最近几页。
 
-    只保留人民币理财产品发行公告。
-    """
+def fetch_all_bob_products():
+    """读取最近几页人民币产品发行公告。"""
 
     selected = {}
 
@@ -635,17 +563,13 @@ def fetch_all_bob_products():
         FETCH_PAGES + 1,
     ):
         try:
-            page_products = (
+            selected.update(
                 fetch_announcement_page(
                     page_number
                 )
             )
 
             successful_pages += 1
-
-            selected.update(
-                page_products
-            )
 
         except Exception as error:
             print(
@@ -712,55 +636,10 @@ def save_snapshot(snapshot):
     )
 
 
-def should_show_on_first_run(
-    product,
-    today,
+def update_snapshot(
+    current_products,
 ):
-    """
-    第一次运行时显示最近7天的发行公告。
-
-    更早公告只作为基准保存，
-    不在新品页面大量展示。
-    """
-
-    announcement_text = (
-        product.get(
-            "announcement_date",
-            "",
-        )
-    )
-
-    try:
-        announcement_date = (
-            date.fromisoformat(
-                announcement_text
-            )
-        )
-
-    except ValueError:
-        return False
-
-    cutoff_date = (
-        today
-        - timedelta(
-            days=DISPLAY_DAYS
-        )
-    )
-
-    return (
-        announcement_date
-        >= cutoff_date
-    )
-
-
-def update_snapshot(current_products):
-    """
-    更新发行公告快照。
-
-    第一次运行时：
-    最近7天公告显示为新品，
-    更早公告作为历史基准。
-    """
+    """更新发行公告历史快照。"""
 
     snapshot = load_snapshot()
 
@@ -770,21 +649,41 @@ def update_snapshot(current_products):
         today.isoformat()
     )
 
+    cutoff_date = (
+        today
+        - timedelta(
+            days=DISPLAY_DAYS
+        )
+    )
+
     if not snapshot.get(
         "initialized"
     ):
-        baseline_products = {}
+        saved_products = {}
 
         initial_new_products = []
 
         for code, product in (
             current_products.items()
         ):
-            show_product = (
-                should_show_on_first_run(
-                    product,
-                    today,
+            try:
+                announcement_date = (
+                    date.fromisoformat(
+                        product.get(
+                            "announcement_date",
+                            "",
+                        )
+                    )
                 )
+
+            except ValueError:
+                announcement_date = None
+
+            show_product = (
+                announcement_date
+                is not None
+                and announcement_date
+                >= cutoff_date
             )
 
             saved_product = {
@@ -796,7 +695,7 @@ def update_snapshot(current_products):
                 "last_seen": today_text,
             }
 
-            baseline_products[
+            saved_products[
                 code
             ] = saved_product
 
@@ -805,7 +704,7 @@ def update_snapshot(current_products):
                     saved_product
                 )
 
-        new_snapshot = {
+        snapshot = {
             "initialized": True,
             "source": (
                 "北银理财发行公告"
@@ -820,23 +719,19 @@ def update_snapshot(current_products):
                     timespec="seconds"
                 )
             ),
-            "products": (
-                baseline_products
-            ),
+            "products": saved_products,
         }
 
-        save_snapshot(
-            new_snapshot
-        )
+        save_snapshot(snapshot)
 
         print(
-            "首次运行：已建立发行公告基准，"
-            f"最近{DISPLAY_DAYS}天识别到"
-            f"{len(initial_new_products)}只新品。"
+            f"首次运行：最近"
+            f"{DISPLAY_DAYS}天识别到"
+            f"{len(initial_new_products)}只新品"
         )
 
         return (
-            new_snapshot,
+            snapshot,
             initial_new_products,
         )
 
@@ -863,7 +758,7 @@ def update_snapshot(current_products):
             )
 
             print(
-                "发现新品："
+                f"发现新品："
                 f"{product['name']} "
                 f"/ {code}"
             )
@@ -873,31 +768,21 @@ def update_snapshot(current_products):
                 saved_products[code]
             )
 
-            first_seen = (
-                old_product.get(
-                    "first_seen",
-                    today_text,
-                )
-            )
-
-            is_baseline = (
-                old_product.get(
-                    "is_baseline",
-                    True,
-                )
-            )
-
             saved_products[code] = {
                 **product,
                 "first_seen": (
-                    first_seen
+                    old_product.get(
+                        "first_seen",
+                        today_text,
+                    )
                 ),
                 "is_baseline": (
-                    is_baseline
+                    old_product.get(
+                        "is_baseline",
+                        True,
+                    )
                 ),
-                "last_seen": (
-                    today_text
-                ),
+                "last_seen": today_text,
             }
 
     snapshot["source"] = (
@@ -922,7 +807,7 @@ def update_snapshot(current_products):
 
 
 # ==========================================
-# 新品页面生成
+# 页面生成
 # ==========================================
 
 def escape_html(value):
@@ -962,49 +847,31 @@ def get_recent_new_products(
         ):
             continue
 
-        announcement_text = (
-            product.get(
-                "announcement_date",
-                "",
-            )
-        )
+        possible_dates = []
 
-        first_seen_text = (
-            product.get(
-                "first_seen",
-                "",
-            )
-        )
-
-        relevant_date = None
-
-        for text_value in (
-            announcement_text,
-            first_seen_text,
+        for field_name in (
+            "announcement_date",
+            "first_seen",
         ):
             try:
-                value_date = (
+                possible_dates.append(
                     date.fromisoformat(
-                        text_value
+                        product.get(
+                            field_name,
+                            "",
+                        )
                     )
                 )
 
             except ValueError:
                 continue
 
-            if (
-                relevant_date is None
-                or value_date
-                > relevant_date
-            ):
-                relevant_date = (
-                    value_date
-                )
-
-        if relevant_date is None:
+        if not possible_dates:
             continue
 
-        if relevant_date < cutoff_date:
+        if max(
+            possible_dates
+        ) < cutoff_date:
             continue
 
         recent.append(product)
@@ -1042,22 +909,17 @@ def create_product_card(product):
         )
     )
 
-    announcement_date = (
-        product.get(
-            "announcement_date",
-            "",
-        )
-        or "-"
-    )
-
     link_html = ""
 
     if announcement_url:
-        link_html = f"""
-        {announcement_url}
-          查看发行公告
-        </a>
-        """
+        link_html = (
+            '<a class="announcement-link" '
+            f'href="{announcement_url}" '
+            'target="_blank" '
+            'rel="noopener noreferrer">'
+            '查看发行公告'
+            '</a>'
+        )
 
     return f"""
     <article class="card">
@@ -1089,7 +951,11 @@ def create_product_card(product):
           <span>公告日期</span>
           <strong>
             {escape_html(
-                announcement_date
+                product.get(
+                    "announcement_date",
+                    "-",
+                )
+                or "-"
             )}
           </strong>
         </div>
@@ -1122,7 +988,7 @@ def create_product_card(product):
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
+        <div class="fundraising">
           产品募集规模：
           <strong>
             {escape_html(
@@ -1133,6 +999,7 @@ def create_product_card(product):
             )}
           </strong>
         </div>
+
         {link_html}
       </div>
     </article>
@@ -1144,27 +1011,22 @@ def render_new_products_page(
 ):
     """生成北银理财新品监测页面。"""
 
-    recent_products = (
+    products = (
         get_recent_new_products(
             snapshot
         )
     )
 
-    if recent_products:
+    if products:
         cards_html = "".join(
             create_product_card(
                 product
             )
-            for product
-            in recent_products
+            for product in products
         )
 
-        empty_html = ""
-
     else:
-        cards_html = ""
-
-        empty_html = """
+        cards_html = """
         <div class="empty">
           <div class="empty-icon">✓</div>
 
@@ -1173,16 +1035,17 @@ def render_new_products_page(
           </div>
 
           <div class="empty-text">
-            已完成北银理财发行公告基准建立。<br>
             后续出现新的人民币理财产品发行公告，
             将自动显示在这里。
           </div>
         </div>
         """
 
-    update_time = snapshot.get(
-        "updated_at",
-        "",
+    update_time = escape_html(
+        snapshot.get(
+            "updated_at",
+            "",
+        )
     )
 
     html = f"""<!doctype html>
@@ -1285,7 +1148,6 @@ def render_new_products_page(
     }}
 
     .card {{
-      position: relative;
       padding: 17px;
       background: white;
       border: 1px solid #eef1f5;
@@ -1350,7 +1212,7 @@ def render_new_products_page(
       margin-top: 12px;
     }}
 
-    .first-seen {{
+    .fundraising {{
       color: #6b7280;
       font-size: 12px;
     }}
@@ -1363,7 +1225,6 @@ def render_new_products_page(
     }}
 
     .empty {{
-      margin-top: 14px;
       padding: 42px 20px;
       background: white;
       border-radius: 16px;
@@ -1402,61 +1263,251 @@ def render_new_products_page(
       line-height: 1.7;
     }}
 
+    .image-actions {{
+      margin-top: 15px;
+    }}
+
+    .image-actions button {{
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      background: #17365d;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }}
+
+    .image-actions button:disabled {{
+      opacity: 0.65;
+      cursor: wait;
+    }}
+
+    .image-result {{
+      display: none;
+      margin-top: 14px;
+    }}
+
+    .image-result.show {{
+      display: block;
+    }}
+
+    .image-result img {{
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      -webkit-touch-callout: default;
+      user-select: auto;
+    }}
+
+    .save-tip {{
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff7df;
+      color: #7a4b00;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+    }}
+
     @media (
       max-width: 480px
     ) {{
-      .info-grid {{
-        grid-template-columns:
-          1fr 1fr;
-      }}
-
       .card-footer {{
         align-items: flex-start;
         flex-direction: column;
       }}
     }}
   </style>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+  </script>
 </head>
 
 <body>
   <main>
-    <section class="header">
-      <h1>北银理财新品</h1>
+    <div id="capture-area">
+      <section class="header">
+        <h1>北银理财新品</h1>
 
-      <div class="sub">
-        监测北银理财官网发行公告中新出现的
-        人民币理财产品。<br>
-        最近更新：
-        {escape_html(update_time)}
+        <div class="sub">
+          监测北银理财官网发行公告中新出现的
+          人民币理财产品。<br>
+          最近更新：{update_time}
+        </div>
+      </section>
+
+      <nav class="nav">
+        <a
+          class="home"
+          href="index.html">
+          净值追踪
+        </a>
+
+        new_products.html
+          新品监测
+        </a>
+      </nav>
+
+      <section class="list">
+        {cards_html}
+      </section>
+
+      <div class="notice">
+        说明：本页面所称“新品”，是指程序首次监测到
+        该产品出现在北银理财官网发行公告中。
+        公告发布不等于产品当日正式成立，
+        也不代表已在全部销售渠道上架。
+        具体信息以北银理财正式公告及销售文件为准。
       </div>
-    </section>
+    </div>
 
-    <nav class="nav">
-      <a
-        class="home"
-        href="index.html">
-        净值追踪
-      </a>
+    <div class="image-actions">
+      <button
+        type="button"
+        id="make-image">
+        生成新品长图
+      </button>
+    </div>
 
-      new_products.html
-        新品监测
-      </a>
-    </nav>
-
-    <section class="list">
-      {cards_html}
-      {empty_html}
-    </section>
-
-    <div class="notice">
-      说明：本页面所称“新品”，是指程序首次监测到
-      该产品出现在北银理财官网发行公告中。
-      公告发布不等于产品当日正式成立，
-      也不代表已在全部销售渠道上架。
-      具体发行、成立和销售信息，
-      以北银理财正式公告及销售文件为准。
+    <div
+      id="image-result"
+      class="image-result">
     </div>
   </main>
+
+  <script>
+    document
+      .getElementById("make-image")
+      .addEventListener(
+        "click",
+        makeLongImage
+      );
+
+    async function makeLongImage() {{
+      const button =
+        document.getElementById(
+          "make-image"
+        );
+
+      const result =
+        document.getElementById(
+          "image-result"
+        );
+
+      if (
+        typeof html2canvas
+        !== "function"
+      ) {{
+        result.classList.add(
+          "show"
+        );
+
+        result.innerHTML =
+          '<div class="save-tip">'
+          + '长图组件加载失败，请刷新页面后重试。'
+          + '</div>';
+
+        return;
+      }}
+
+      button.disabled = true;
+
+      button.textContent =
+        "正在生成长图…";
+
+      result.classList.remove(
+        "show"
+      );
+
+      result.innerHTML = "";
+
+      try {{
+        const target =
+          document.getElementById(
+            "capture-area"
+          );
+
+        const canvas =
+          await html2canvas(
+            target,
+            {{
+              backgroundColor:
+                "#f5f7fb",
+              scale: 2,
+              useCORS: true,
+              logging: false
+            }}
+          );
+
+        const image =
+          document.createElement(
+            "img"
+          );
+
+        image.src =
+          canvas.toDataURL(
+            "image/png"
+          );
+
+        image.alt =
+          "北银理财新品监测长图";
+
+        const tip =
+          document.createElement(
+            "div"
+          );
+
+        tip.className =
+          "save-tip";
+
+        tip.textContent =
+          "长按下方图片，选择保存图片或保存到照片";
+
+        result.appendChild(
+          tip
+        );
+
+        result.appendChild(
+          image
+        );
+
+        result.classList.add(
+          "show"
+        );
+
+        result.scrollIntoView(
+          {{
+            behavior: "smooth",
+            block: "start"
+          }}
+        );
+
+        button.textContent =
+          "重新生成新品长图";
+
+      }} catch (error) {{
+        result.classList.add(
+          "show"
+        );
+
+        result.innerHTML =
+          '<div class="save-tip">'
+          + '长图生成失败，请刷新页面后重试。'
+          + '</div>';
+
+        button.textContent =
+          "重新生成新品长图";
+
+      }} finally {{
+        button.disabled = false;
+      }}
+    }}
+  </script>
 </body>
 </html>
 """
