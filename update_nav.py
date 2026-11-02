@@ -364,16 +364,14 @@ def get_nav_records(share_code):
         key=lambda item: item["date"],
     )
 
+    if sorted_records:
+        latest = sorted_records[-1]
 
-
-if sorted_records:
-    latest = sorted_records[-1]
-
-    print(
-        f"{share_code}：取得北京银行净值 "
-        f"{latest['date']} "
-        f"{latest['nav']}"
-    )
+        print(
+            f"{share_code}：取得北京银行净值 "
+            f"{latest['date']} "
+            f"{latest['nav']}"
+        )
 
     return sorted_records
 
