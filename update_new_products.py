@@ -602,6 +602,11 @@ def fetch_announcement_page(
             "announcement_date": (
                 announcement_date
             ),
+                        "fundraising_scale": (
+                extract_fundraising_scale(
+                    href
+                )
+            ),
             "announcement_url": href,
         }
 
