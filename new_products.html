@@ -98,7 +98,6 @@
     }
 
     .card {
-      position: relative;
       padding: 17px;
       background: white;
       border: 1px solid #eef1f5;
@@ -163,7 +162,7 @@
       margin-top: 12px;
     }
 
-    .first-seen {
+    .fundraising {
       color: #6b7280;
       font-size: 12px;
     }
@@ -176,7 +175,6 @@
     }
 
     .empty {
-      margin-top: 14px;
       padding: 42px 20px;
       background: white;
       border-radius: 16px;
@@ -215,49 +213,98 @@
       line-height: 1.7;
     }
 
+    .image-actions {
+      margin-top: 15px;
+    }
+
+    .image-actions button {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      background: #17365d;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .image-actions button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .image-result {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .image-result.show {
+      display: block;
+    }
+
+    .image-result img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      -webkit-touch-callout: default;
+      user-select: auto;
+    }
+
+    .save-tip {
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff7df;
+      color: #7a4b00;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
     @media (
       max-width: 480px
     ) {
-      .info-grid {
-        grid-template-columns:
-          1fr 1fr;
-      }
-
       .card-footer {
         align-items: flex-start;
         flex-direction: column;
       }
     }
   </style>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+  </script>
 </head>
 
 <body>
   <main>
-    <section class="header">
-      <h1>北银理财新品</h1>
+    <div id="capture-area">
+      <section class="header">
+        <h1>北银理财新品</h1>
 
-      <div class="sub">
-        监测北银理财官网发行公告中新出现的
-        人民币理财产品。<br>
-        最近更新：
-        2026-11-02T12:53:33+00:00
-      </div>
-    </section>
+        <div class="sub">
+          监测北银理财官网发行公告中新出现的
+          人民币理财产品。<br>
+          最近更新：2026-11-02T14:25:29+00:00
+        </div>
+      </section>
 
-    <nav class="nav">
-      <a
-        class="home"
-        href="index.html">
-        净值追踪
-      </a>
+      <nav class="nav">
+        <a
+          class="home"
+          href="index.html">
+          净值追踪
+        </a>
 
-      new_products.html
-        新品监测
-      </a>
-    </nav>
+        new_products.html
+          新品监测
+        </a>
+      </nav>
 
-    <section class="list">
-      
+      <section class="list">
+        
     <article class="card">
       <div class="new-tag">
         北银理财新发行
@@ -303,16 +350,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,000,000元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享90天持有期102号B类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享90天持有期102号B类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -361,16 +406,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            900,000元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享7天持有期101号B类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享7天持有期101号B类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -419,16 +462,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,000,000元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享30天持有期102号B类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享30天持有期102号B类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -477,16 +518,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            20,000,000元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列智远50天持有期1号A类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列智远50天持有期1号A类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -535,16 +574,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            226,836,959.91元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号新客类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号新客类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -593,16 +630,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            226,836,959.91元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号Z类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号Z类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -651,16 +686,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            226,836,959.91元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号S类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号S类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -709,16 +742,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            226,836,959.91元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号M类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号M类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -767,16 +798,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            226,836,959.91元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号A类份额理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号A类份额理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -825,16 +854,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            31,809,478元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财春系列封闭式3号（幸福安享）理财产品理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财春系列封闭式3号（幸福安享）理财产品理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -883,16 +910,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            139,495,690.16元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财京华远见春系列卓远固收封闭式390号理财产品理财产品发行公告_2026-10-29.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财京华远见春系列卓远固收封闭式390号理财产品理财产品发行公告_2026-10-29.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -941,16 +966,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            174,098,128.4元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列行远14M封闭式5号（资产轮动）A类份额理财产品发行公告_2026-10-28.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列行远14M封闭式5号（资产轮动）A类份额理财产品发行公告_2026-10-28.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -999,16 +1022,14 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            3,467,864.72元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列谋定止盈44号A类份额理财产品发行公告_2026-10-27.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列谋定止盈44号A类份额理财产品发行公告_2026-10-27.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
@@ -1057,30 +1078,169 @@
       </div>
 
       <div class="card-footer">
-        <div class="first-seen">
-          首次监测到：
-          2026-11-02
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,000,000元
+          </strong>
         </div>
 
-        
-        https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享7天持有期35号A类份额理财产品发行公告_2026-10-27.pdf
-          查看发行公告
-        </a>
-        
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享7天持有期35号A类份额理财产品发行公告_2026-10-27.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
       </div>
     </article>
     
-      
-    </section>
+      </section>
 
-    <div class="notice">
-      说明：本页面所称“新品”，是指程序首次监测到
-      该产品出现在北银理财官网发行公告中。
-      公告发布不等于产品当日正式成立，
-      也不代表已在全部销售渠道上架。
-      具体发行、成立和销售信息，
-      以北银理财正式公告及销售文件为准。
+      <div class="notice">
+        说明：本页面所称“新品”，是指程序首次监测到
+        该产品出现在北银理财官网发行公告中。
+        公告发布不等于产品当日正式成立，
+        也不代表已在全部销售渠道上架。
+        具体信息以北银理财正式公告及销售文件为准。
+      </div>
+    </div>
+
+    <div class="image-actions">
+      <button
+        type="button"
+        id="make-image">
+        生成新品长图
+      </button>
+    </div>
+
+    <div
+      id="image-result"
+      class="image-result">
     </div>
   </main>
+
+  <script>
+    document
+      .getElementById("make-image")
+      .addEventListener(
+        "click",
+        makeLongImage
+      );
+
+    async function makeLongImage() {
+      const button =
+        document.getElementById(
+          "make-image"
+        );
+
+      const result =
+        document.getElementById(
+          "image-result"
+        );
+
+      if (
+        typeof html2canvas
+        !== "function"
+      ) {
+        result.classList.add(
+          "show"
+        );
+
+        result.innerHTML =
+          '<div class="save-tip">'
+          + '长图组件加载失败，请刷新页面后重试。'
+          + '</div>';
+
+        return;
+      }
+
+      button.disabled = true;
+
+      button.textContent =
+        "正在生成长图…";
+
+      result.classList.remove(
+        "show"
+      );
+
+      result.innerHTML = "";
+
+      try {
+        const target =
+          document.getElementById(
+            "capture-area"
+          );
+
+        const canvas =
+          await html2canvas(
+            target,
+            {
+              backgroundColor:
+                "#f5f7fb",
+              scale: 2,
+              useCORS: true,
+              logging: false
+            }
+          );
+
+        const image =
+          document.createElement(
+            "img"
+          );
+
+        image.src =
+          canvas.toDataURL(
+            "image/png"
+          );
+
+        image.alt =
+          "北银理财新品监测长图";
+
+        const tip =
+          document.createElement(
+            "div"
+          );
+
+        tip.className =
+          "save-tip";
+
+        tip.textContent =
+          "长按下方图片，选择保存图片或保存到照片";
+
+        result.appendChild(
+          tip
+        );
+
+        result.appendChild(
+          image
+        );
+
+        result.classList.add(
+          "show"
+        );
+
+        result.scrollIntoView(
+          {
+            behavior: "smooth",
+            block: "start"
+          }
+        );
+
+        button.textContent =
+          "重新生成新品长图";
+
+      } catch (error) {
+        result.classList.add(
+          "show"
+        );
+
+        result.innerHTML =
+          '<div class="save-tip">'
+          + '长图生成失败，请刷新页面后重试。'
+          + '</div>';
+
+        button.textContent =
+          "重新生成新品长图";
+
+      } finally {
+        button.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
