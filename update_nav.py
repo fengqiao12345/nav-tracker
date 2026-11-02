@@ -308,7 +308,8 @@ def get_nav_records(share_code):
                 "date": "2026-10-30",
                 "nav": 1.015061
             }
-        
+        ]
+
     response = SESSION.post(
         API_URL,
         json=payload,
