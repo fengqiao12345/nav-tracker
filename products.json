@@ -54,5 +54,12 @@
     "registration_code": "",
     "manager": "北银理财",
     "enabled": true
+  },
+  {
+    "name": "诚享7天29号A",
+    "share_code": "YJ01251204A",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
   }
 ]
