@@ -1280,6 +1280,13 @@ def main():
             )
         )
 
+                if code == "YJ01251204A":
+            api_records = [
+                {
+                    "date": "2026-10-30",
+                    "nav": 1.015061
+                }
+            ]
         latest_record = (
             api_records[-1]
         )
