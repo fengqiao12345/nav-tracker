@@ -364,8 +364,7 @@ def get_nav_records(share_code):
         key=lambda item: item["date"],
     )
 
-    if share_code == "YJ01251204A":
-    print(sorted_records)
+
 
 if sorted_records:
     latest = sorted_records[-1]
