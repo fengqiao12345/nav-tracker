@@ -1123,15 +1123,16 @@ def create_product_card(product):
 
       <div class="card-footer">
         <div class="first-seen">
-          首次监测到：
-          {escape_html(
-              product.get(
-                  "first_seen",
-                  "",
-              )
-          )}
+          产品募集规模：
+          <strong>
+            {escape_html(
+                product.get(
+                    "fundraising_scale",
+                    "未披露",
+                )
+            )}
+          </strong>
         </div>
-
         {link_html}
       </div>
     </article>
