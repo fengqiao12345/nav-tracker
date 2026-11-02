@@ -2,7 +2,7 @@ import hashlib
 import io
 import json
 import re
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import unquote, urljoin
 
@@ -713,11 +713,13 @@ def update_snapshot(
                 today_text
             ),
             "updated_at": (
-                datetime.now()
-                .astimezone()
-                .isoformat(
-                    timespec="seconds"
-                )
+datetime.now(
+    timezone(
+        timedelta(hours=8)
+    )
+).strftime(
+    "%Y-%m-%d %H:%M:%S"
+) + "（北京时间）"
             ),
             "products": saved_products,
         }
@@ -794,11 +796,13 @@ def update_snapshot(
     )
 
     snapshot["updated_at"] = (
-        datetime.now()
-        .astimezone()
-        .isoformat(
-            timespec="seconds"
-        )
+datetime.now(
+    timezone(
+        timedelta(hours=8)
+    )
+).strftime(
+    "%Y-%m-%d %H:%M:%S"
+) + "（北京时间）"
     )
 
     save_snapshot(snapshot)
