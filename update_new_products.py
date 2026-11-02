@@ -3,7 +3,7 @@ import json
 import re
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import unquote, urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -310,17 +310,15 @@ def fetch_announcement_page(
             "Referer": (
                 BASE_URL + "/"
             ),
-            "Cache-Control": (
-                "no-cache"
-            ),
+            "Cache-Control": "no-cache",
         },
         timeout=30,
     )
 
     response.raise_for_status()
 
-    if not response.encoding:
-        response.encoding = "utf-8"
+    # 北银理财网页使用UTF-8编码
+    response.encoding = "utf-8"
 
     soup = BeautifulSoup(
         response.text,
@@ -333,61 +331,138 @@ def fetch_announcement_page(
         "a",
         href=True,
     ):
-        title = normalize_text(
+        raw_href = str(
+            link.get(
+                "href",
+                "",
+            )
+        ).strip()
+
+        if not raw_href:
+            continue
+
+        href = urljoin(
+            page_url,
+            raw_href,
+        )
+
+        decoded_href = unquote(
+            href
+        )
+
+        # 只处理PDF发行公告
+        if ".pdf" not in decoded_href.lower():
+            continue
+
+        link_text = normalize_text(
             link.get_text(
                 " ",
                 strip=True,
             )
         )
 
-        if not is_rmb_issuance(
-            title
-        ):
-            continue
-
-        href = urljoin(
-            page_url,
-            str(
-                link.get(
-                    "href",
-                    "",
-                )
-            ).strip(),
-        )
-
-        if not href:
-            continue
-
+        # 标题可能放在父级元素中
         parent_text = ""
 
         if link.parent:
-            parent_text = (
-                normalize_text(
-                    link.parent.get_text(
-                        " ",
-                        strip=True,
-                    )
+            parent_text = normalize_text(
+                link.parent.get_text(
+                    " ",
+                    strip=True,
                 )
             )
+
+        # 如果父级文字仍不完整，再读取上一级
+        grandparent_text = ""
+
+        if (
+            link.parent
+            and link.parent.parent
+        ):
+            grandparent_text = normalize_text(
+                link.parent.parent.get_text(
+                    " ",
+                    strip=True,
+                )
+            )
+
+        combined_text = normalize_text(
+            f"{link_text} "
+            f"{parent_text} "
+            f"{grandparent_text} "
+            f"{decoded_href}"
+        )
+
+        # 必须是发行公告
+        if "发行公告" not in combined_text:
+            continue
+
+        # 必须与理财产品有关
+        if (
+            "理财产品" not in combined_text
+            and "理财管理计划" not in combined_text
+        ):
+            continue
+
+        # 排除美元产品
+        upper_text = combined_text.upper()
+
+        if any(
+            word in upper_text
+            for word in (
+                "美元",
+                "USD",
+                "现钞",
+                "现汇",
+            )
+        ):
+            continue
+
+        # 优先使用网页中的可见标题
+        title = link_text
+
+        if (
+            len(parent_text)
+            > len(title)
+        ):
+            title = parent_text
+
+        # 可见标题为空时，从PDF文件名获取
+        if not title:
+            title = (
+                decoded_href
+                .split("/")[-1]
+                .replace(".pdf", "")
+            )
+
+        # 如果标题中不包含发行公告，
+        # 使用解码后的PDF文件名
+        if "发行公告" not in title:
+            file_title = (
+                decoded_href
+                .split("/")[-1]
+                .replace(".pdf", "")
+            )
+
+            if "发行公告" in file_title:
+                title = file_title
+
+        product_name = clean_product_name(
+            title
+        )
 
         announcement_date = (
             extract_announcement_date(
                 title,
-                parent_text,
-                href,
-            )
-        )
-
-        product_name = (
-            clean_product_name(
-                title
+                combined_text,
+                decoded_href,
             )
         )
 
         product_code = (
             extract_product_code(
                 title,
-                href,
+                decoded_href,
             )
         )
 
@@ -423,7 +498,6 @@ def fetch_announcement_page(
     )
 
     return products
-
 
 def fetch_all_bob_products():
     """
