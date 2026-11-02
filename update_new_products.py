@@ -7,6 +7,7 @@ from urllib.parse import unquote, urljoin
 
 import requests
 from bs4 import BeautifulSoup
+from pypdf import PdfReader
 
 
 # ==========================================
@@ -259,7 +260,121 @@ def extract_holding_period(name):
 
     return "-"
 
+def extract_fundraising_scale(
+    pdf_url,
+):
+    """
+    从公告PDF中提取产品募集规模。
 
+    如果公告未披露实际募集规模，
+    返回“未披露”。
+    """
+
+    if not pdf_url:
+        return "未披露"
+
+    try:
+        response = SESSION.get(
+            pdf_url,
+            headers={
+                "Referer": (
+                    BASE_URL + "/"
+                ),
+                "User-Agent": (
+                    "Mozilla/5.0 "
+                    "(Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) "
+                    "Chrome/130.0.0.0 Safari/537.36"
+                ),
+            },
+            timeout=45,
+        )
+
+        response.raise_for_status()
+
+        pdf_file = Path(
+            "temp_announcement.pdf"
+        )
+
+        pdf_file.write_bytes(
+            response.content
+        )
+
+        reader = PdfReader(
+            str(pdf_file)
+        )
+
+        text_parts = []
+
+        # 一般目标信息在前几页，
+        # 最多读取前6页，避免运行过慢
+        for page in reader.pages[:6]:
+            page_text = (
+                page.extract_text()
+                or ""
+            )
+
+            text_parts.append(
+                page_text
+            )
+
+        try:
+            pdf_file.unlink()
+        except OSError:
+            pass
+
+        full_text = " ".join(
+            " ".join(
+                text_parts
+            ).split()
+        )
+
+        patterns = (
+            r"产品募集规模"
+            r"[\s：:]*"
+            r"([0-9,，.]+)"
+            r"\s*(亿元|万元|元)",
+
+            r"募集规模"
+            r"[\s：:]*"
+            r"([0-9,，.]+)"
+            r"\s*(亿元|万元|元)",
+
+            r"份额募集规模"
+            r"[\s：:]*"
+            r"([0-9,，.]+)"
+            r"\s*(亿元|万元|元)",
+        )
+
+        for pattern in patterns:
+            match = re.search(
+                pattern,
+                full_text,
+            )
+
+            if not match:
+                continue
+
+            number = (
+                match.group(1)
+                .replace("，", ",")
+            )
+
+            unit = match.group(2)
+
+            return f"{number}{unit}"
+
+        return "未披露"
+
+    except Exception as error:
+        print(
+            "募集规模提取失败："
+            f"{type(error).__name__}: "
+            f"{error}"
+        )
+
+        return "未披露"
 def is_rmb_issuance(title):
     """识别人民币理财产品发行公告。"""
 
