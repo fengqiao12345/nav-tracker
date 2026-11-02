@@ -1335,8 +1335,6 @@ def render_new_products_page(
         <h1>北银理财新品</h1>
 
         <div class="sub">
-          监测北银理财官网发行公告中新出现的
-          人民币理财产品。<br>
           最近更新：{update_time}
         </div>
       </section>
