@@ -287,29 +287,128 @@ def get_nav_records(share_code):
     }
 
     if share_code == "YJ01251204A":
-        return [
-            {
-                "date": "2026-10-26",
-                "nav": 1.015398
-            },
-            {
-                "date": "2026-10-27",
-                "nav": 1.015448
-            },
-            {
-                "date": "2026-10-28",
-                "nav": 1.015553
-            },
-            {
-                "date": "2026-10-29",
-                "nav": 1.015555
-            },
-            {
-                "date": "2026-10-30",
-                "nav": 1.015061
-            }
-        ]
 
+        new_api_url = (
+            "https://www.beijingbobwealth.com.cn"
+            "/bylc-api/product/navindex"
+        )
+
+        new_params = {
+            "pageSize": 30,
+            "pageNumber": 1,
+            "KEY": share_code,
+        }
+
+        new_headers = {
+            "Accept": (
+                "application/json, "
+                "text/javascript, */*; q=0.01"
+            ),
+            "Referer": (
+                "https://www.beijingbobwealth.com.cn/"
+            ),
+            "X-Requested-With": "XMLHttpRequest",
+            "User-Agent": (
+                "Mozilla/5.0 "
+                "(Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 "
+                "(KHTML, like Gecko) "
+                "Chrome/130.0.0.0 Safari/537.36"
+            ),
+        }
+
+        try:
+            new_response = SESSION.get(
+                new_api_url,
+                params=new_params,
+                headers=new_headers,
+                timeout=30,
+            )
+
+            new_response.raise_for_status()
+
+            new_result = new_response.json()
+
+            new_rows = (
+                new_result.get("data", {})
+                .get("list", [])
+            )
+
+            new_records = []
+
+            for row in new_rows:
+
+                product_code = str(
+                    row.get("PROD_CODE", "")
+                ).strip()
+
+                nav_date = str(
+                    row.get("NAV_DATE", "")
+                ).strip()
+
+                nav_value = row.get("NAV")
+
+                if product_code != share_code:
+                    continue
+
+                if not re.fullmatch(
+                    r"\d{8}",
+                    nav_date,
+                ):
+                    continue
+
+                try:
+                    nav_number = float(
+                        nav_value
+                    )
+                except (TypeError, ValueError):
+                    continue
+
+                if nav_number <= 0:
+                    continue
+
+                new_records.append(
+                    {
+                        "date": (
+                            f"{nav_date[0:4]}-"
+                            f"{nav_date[4:6]}-"
+                            f"{nav_date[6:8]}"
+                        ),
+                        "nav": nav_number,
+                    }
+                )
+
+            new_records = sorted(
+                new_records,
+                key=lambda item: item["date"],
+            )
+
+            if new_records:
+                latest = new_records[-1]
+
+                print(
+                    f"{share_code}："
+                    f"取得北银理财官网净值 "
+                    f"{latest['date']} "
+                    f"{latest['nav']}"
+                )
+
+                return new_records
+
+            print(
+                f"{share_code}："
+                "北银理财官网未返回有效净值，"
+                "改用北京银行原接口"
+            )
+
+        except Exception as error:
+            print(
+                f"{share_code}："
+                "北银理财官网接口访问失败，"
+                "改用北京银行原接口："
+                f"{type(error).__name__}: "
+                f"{error}"
+            )
     response = SESSION.post(
         API_URL,
         json=payload,
