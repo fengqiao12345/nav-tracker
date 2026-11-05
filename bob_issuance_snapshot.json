@@ -2,7 +2,7 @@
   "initialized": true,
   "source": "北银理财发行公告",
   "baseline_date": "2026-11-02",
-  "updated_at": "2026-11-05 10:01:03（北京时间）",
+  "updated_at": "2026-11-05 22:52:21（北京时间）",
   "products": {
     "GGFA7E6E8497D6": {
       "code": "GGFA7E6E8497D6",
@@ -262,6 +262,45 @@
       "fundraising_scale": "10,000,000元",
       "first_seen": "2026-11-02",
       "is_baseline": true,
+      "last_seen": "2026-11-05"
+    },
+    "GGE2607C6A0148": {
+      "code": "GGE2607C6A0148",
+      "name": "北银理财春系列诚享7天持有期60号S类份额理财产品发行公告_2026-10-30",
+      "manager": "北银理财有限责任公司",
+      "holding_period": "7天持有期",
+      "product_type": "人民币理财产品",
+      "announcement_date": "2026-10-30",
+      "announcement_url": "https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享7天持有期60号S类份额理财产品发行公告_2026-10-30.pdf",
+      "fundraising_scale": "467,204元",
+      "first_seen": "2026-11-05",
+      "is_baseline": false,
+      "last_seen": "2026-11-05"
+    },
+    "GG60B32F5CF72E": {
+      "code": "GG60B32F5CF72E",
+      "name": "北银理财春系列卓远固收封闭式432号X类份额理财产品发行公告_2026-10-29",
+      "manager": "北银理财有限责任公司",
+      "holding_period": "封闭式",
+      "product_type": "人民币理财产品",
+      "announcement_date": "2026-10-29",
+      "announcement_url": "https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式432号X类份额理财产品发行公告_2026-10-29.pdf",
+      "fundraising_scale": "226,836,959.91元",
+      "first_seen": "2026-11-05",
+      "is_baseline": false,
+      "last_seen": "2026-11-05"
+    },
+    "GGCEF83107E98B": {
+      "code": "GGCEF83107E98B",
+      "name": "北银理财北银理财京华远见春系列卓远固收封闭式432F理财产品发行公告_2026-10-29",
+      "manager": "北银理财有限责任公司",
+      "holding_period": "封闭式",
+      "product_type": "人民币理财产品",
+      "announcement_date": "2026-10-29",
+      "announcement_url": "https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财京华远见春系列卓远固收封闭式432F理财产品发行公告_2026-10-29.pdf",
+      "fundraising_scale": "226,836,959.91元",
+      "first_seen": "2026-11-05",
+      "is_baseline": false,
       "last_seen": "2026-11-05"
     }
   }
