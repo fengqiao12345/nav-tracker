@@ -2,7 +2,7 @@
   "initialized": true,
   "source": "北银理财发行公告",
   "baseline_date": "2026-11-02",
-  "updated_at": "2026-11-08 07:29:59（北京时间）",
+  "updated_at": "2026-11-08 08:48:37（北京时间）",
   "products": {
     "GGFA7E6E8497D6": {
       "code": "GGFA7E6E8497D6",
@@ -15,7 +15,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GGA842B5841230": {
       "code": "GGA842B5841230",
@@ -28,7 +28,7 @@
       "fundraising_scale": "139,495,690.16元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG486707756899": {
       "code": "GG486707756899",
@@ -41,7 +41,7 @@
       "fundraising_scale": "31,809,478元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GGFCBF6B8ED298": {
       "code": "GGFCBF6B8ED298",
@@ -54,7 +54,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG6B39950858E6": {
       "code": "GG6B39950858E6",
@@ -67,7 +67,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG4B53B27ADD75": {
       "code": "GG4B53B27ADD75",
@@ -80,7 +80,7 @@
       "fundraising_scale": "1,000,000元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GGC605504A60D9": {
       "code": "GGC605504A60D9",
@@ -93,7 +93,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG1CBF9A4E3A41": {
       "code": "GG1CBF9A4E3A41",
@@ -106,7 +106,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG1F14F9B496BB": {
       "code": "GG1F14F9B496BB",
@@ -119,7 +119,7 @@
       "fundraising_scale": "900,000元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG1AC7F1FBBEA0": {
       "code": "GG1AC7F1FBBEA0",
@@ -132,7 +132,7 @@
       "fundraising_scale": "1,000,000元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GGC7304E2E715E": {
       "code": "GGC7304E2E715E",
@@ -275,7 +275,7 @@
       "fundraising_scale": "467,204元",
       "first_seen": "2026-11-05",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG60B32F5CF72E": {
       "code": "GG60B32F5CF72E",
@@ -288,7 +288,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-05",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GGCEF83107E98B": {
       "code": "GGCEF83107E98B",
@@ -301,7 +301,7 @@
       "fundraising_scale": "226,836,959.91元",
       "first_seen": "2026-11-05",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG03F0D533CA8F": {
       "code": "GG03F0D533CA8F",
@@ -314,7 +314,7 @@
       "fundraising_scale": "2,033,298,638.45元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GGF0E60CA8E67E": {
       "code": "GGF0E60CA8E67E",
@@ -327,7 +327,7 @@
       "fundraising_scale": "810,605元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG2E5DDCA8C872": {
       "code": "GG2E5DDCA8C872",
@@ -340,7 +340,7 @@
       "fundraising_scale": "2,033,298,638.45元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG3D1EC0277FB2": {
       "code": "GG3D1EC0277FB2",
@@ -353,7 +353,7 @@
       "fundraising_scale": "342,006元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG7B6553992541": {
       "code": "GG7B6553992541",
@@ -366,7 +366,7 @@
       "fundraising_scale": "2,033,298,638.45元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG8F7B61D570F7": {
       "code": "GG8F7B61D570F7",
@@ -379,7 +379,7 @@
       "fundraising_scale": "467,204元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     },
     "GG239CD8695F82": {
       "code": "GG239CD8695F82",
@@ -392,7 +392,7 @@
       "fundraising_scale": "2,033,298,638.45元",
       "first_seen": "2026-11-06",
       "is_baseline": false,
-      "last_seen": "2026-11-07"
+      "last_seen": "2026-11-08"
     }
   }
 }
