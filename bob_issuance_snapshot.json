@@ -2,7 +2,7 @@
   "initialized": true,
   "source": "北银理财发行公告",
   "baseline_date": "2026-11-02",
-  "updated_at": "2026-11-09 10:01:56（北京时间）",
+  "updated_at": "2026-11-09 22:49:14（北京时间）",
   "products": {
     "GGFA7E6E8497D6": {
       "code": "GGFA7E6E8497D6",
@@ -145,7 +145,7 @@
       "fundraising_scale": "20,000,000元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GG7CACC82080A4": {
       "code": "GG7CACC82080A4",
@@ -158,7 +158,7 @@
       "fundraising_scale": "174,098,128.4元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GG6A41BECE790A": {
       "code": "GG6A41BECE790A",
@@ -171,7 +171,7 @@
       "fundraising_scale": "1,000,000元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GG7FE8EC0D7511": {
       "code": "GG7FE8EC0D7511",
@@ -184,7 +184,7 @@
       "fundraising_scale": "3,467,864.72元",
       "first_seen": "2026-11-02",
       "is_baseline": false,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GG082B2C84BACE": {
       "code": "GG082B2C84BACE",
@@ -197,7 +197,7 @@
       "fundraising_scale": "1,590,671,503.97元",
       "first_seen": "2026-11-02",
       "is_baseline": true,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GGBA76F9C94D4B": {
       "code": "GGBA76F9C94D4B",
@@ -210,7 +210,7 @@
       "fundraising_scale": "1,590,671,503.97元",
       "first_seen": "2026-11-02",
       "is_baseline": true,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GG26019EB84ECE": {
       "code": "GG26019EB84ECE",
@@ -223,7 +223,7 @@
       "fundraising_scale": "1,590,671,503.97元",
       "first_seen": "2026-11-02",
       "is_baseline": true,
-      "last_seen": "2026-11-06"
+      "last_seen": "2026-11-09"
     },
     "GGA1AB67BF58A1": {
       "code": "GGA1AB67BF58A1",
@@ -236,7 +236,7 @@
       "fundraising_scale": "1,590,671,503.97元",
       "first_seen": "2026-11-02",
       "is_baseline": true,
-      "last_seen": "2026-11-05"
+      "last_seen": "2026-11-09"
     },
     "GG13D22F41DB81": {
       "code": "GG13D22F41DB81",
@@ -249,7 +249,7 @@
       "fundraising_scale": "1,590,671,503.97元",
       "first_seen": "2026-11-02",
       "is_baseline": true,
-      "last_seen": "2026-11-05"
+      "last_seen": "2026-11-09"
     },
     "GG10E915E8AFC0": {
       "code": "GG10E915E8AFC0",
