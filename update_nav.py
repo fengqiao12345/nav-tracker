@@ -1,33 +1,28 @@
-import requests
 import json
-import re
 from datetime import date
+from playwright.sync_api import sync_playwright
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Referer": "https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "zh-CN,zh;q=0.9",
-    "Cache-Control": "no-cache"
-}
 TODAY = date.today().strftime("%Y-%m-%d")
-
-# 正则：匹配最新一行净值，格式：日期 + 单位净值 + 累计净值
-re_nav_row = re.compile(r'(\d{4}-\d{2}-\d{2})\s*(\d+\.\d+)\s*(\d+\.\d+)')
 
 def fetch_nav(code):
     url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={code}"
     try:
-        r = requests.get(url, headers=HEADERS, timeout=25)
-        r.raise_for_status()
-        html = r.text
-        match = re_nav_row.search(html)
-        if match:
-            nav_date, unit_nav, acc_nav = match.groups()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36")
+            page.goto(url, timeout=30000)
+            # 等待表格渲染
+            page.wait_for_selector("table", timeout=15000)
+            # 取第一行净值（最新）
+            row = page.locator("table tr:nth-child(2)").inner_text()
+            browser.close()
+            parts = row.split()
+            nav_date = parts[1]
+            unit_nav = parts[2]
+            acc_nav = parts[3]
             return unit_nav, acc_nav, nav_date
-        return None, None, None
     except Exception as e:
-        print(f"[{code}] 抓取异常：{str(e)}")
+        print(f"[{code}] 抓取失败：{e}")
         return None, None, None
 
 def load_products():
