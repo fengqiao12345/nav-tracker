@@ -2,6 +2,7 @@ import json
 import re
 import ssl
 import warnings
+import time
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -258,8 +259,140 @@ def prepare_session():
             error,
         )
 
-
-return sorted_records
+# ==========================================
+# 获取净值（支持YJ01251204A从北银理财拉总资产，缓存上一期总资产）
+# ==========================================
+def get_nav_records(share_code):
+    """
+    获取指定产品最近30个净值点。
+    诚享7天29号A：YJ01251204A，北银理财接口KEY用YJ01251204
+    新增逻辑：当天TOTAL_NAV为空时，复用最近一条有效的总资产
+    """
+    # 去掉末尾A，用来匹配北银理财接口
+    bare_code = share_code.rstrip("A")
+    if bare_code == "YJ01251204":
+        new_api_url = (
+            "https://www.beijingbobwealth.com.cn"
+            "/bylc-api/product/navindex"
+        )
+        new_params = {
+            "pageSize": 30,
+            "pageNumber": 1,
+            "KEY": bare_code,
+        }
+        new_headers = {
+            "Accept": "application/json,text/javascript,*/*;q=0.01",
+            "Referer": "https://www.beijingbobwealth.com.cn/",
+            "X-Requested-With": "XMLHttpRequest",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+        }
+        # 增加2次重试
+        retry = 2
+        last_valid_total_asset = None
+        for attempt in range(retry):
+            try:
+                print(f"【{share_code}】尝试调用北银理财总资产接口 KEY={bare_code}，第{attempt+1}次")
+                new_response = SESSION.get(
+                    new_api_url,
+                    params=new_params,
+                    headers=new_headers,
+                    timeout=40,
+                    verify=False
+                )
+                new_response.raise_for_status()
+                new_result = new_response.json()
+                new_rows = new_result.get("data", {}).get("list", [])
+                new_records = []
+                for row in new_rows:
+                    nav_date = str(row.get("NAV_DATE", "")).strip()
+                    nav_value = row.get("NAV")
+                    if not re.fullmatch(r"\d{8}", nav_date):
+                        continue
+                    try:
+                        nav_number = float(nav_value)
+                    except (TypeError, ValueError):
+                        continue
+                    if nav_number <= 0:
+                        continue
+                    # 读取总资产，为空就沿用缓存的有效值
+                    total_nav_str = str(row.get("TOTAL_NAV", "")).strip()
+                    try:
+                        total_nav = float(total_nav_str)
+                        last_valid_total_asset = total_nav
+                    except:
+                        total_nav = last_valid_total_asset
+                    new_records.append({
+                        "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
+                        "nav": nav_number,
+                        "total_asset": total_nav,
+                    })
+                new_records = sorted(new_records, key=lambda item: item["date"])
+                if new_records:
+                    latest = new_records[-1]
+                    print(f"{share_code}：✅北银理财官网净值 {latest['date']} {latest['nav']} 总资产={latest.get('total_asset')}")
+                    return new_records
+                print(f"{share_code}：❌北银理财官网未返回有效净值，改用北京银行原接口")
+            except Exception as error:
+                print(f"{share_code}：❌第{attempt+1}次访问北银理财失败：{type(error).__name__}: {error}")
+                time.sleep(3)
+    # 降级到老接口（北京银行）
+    payload = {
+        "pageNum": 1,
+        "pageSize": 30,
+        "titleId": TITLE_ID,
+        "prodCode": share_code,
+        "channel": 1,
+        "language": "CN",
+    }
+    headers = {
+        "Accept": "application/json,text/plain,*/*",
+        "Content-Type": "application/json",
+        "Origin": "https://bankofbeijing.com.cn",
+        "Referer": PAGE_URL,
+    }
+    response = SESSION.post(
+        API_URL,
+        json=payload,
+        headers=headers,
+        timeout=30,
+    )
+    response.raise_for_status()
+    result = response.json()
+    if result.get("code") != 0:
+        print(f"{share_code}：接口返回异常")
+        return []
+    records = result.get("data", {}).get("records", [])
+    valid_records = []
+    for record in records:
+        product_code = str(record.get("prdcode", "")).strip()
+        nav_date = str(record.get("navTime", "")).strip()
+        nav_value = record.get("nav")
+        if product_code != share_code:
+            continue
+        if nav_value in (None, ""):
+            continue
+        if not re.fullmatch(r"\d{8}", nav_date):
+            continue
+        try:
+            nav_number = float(nav_value)
+        except (TypeError, ValueError):
+            continue
+        if nav_number <= 0:
+            continue
+        valid_records.append({
+            "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
+            "nav": nav_number,
+        })
+    unique_records = {}
+    for record in valid_records:
+        unique_records[record["date"]] = record
+    sorted_records = sorted(unique_records.values(), key=lambda item: item["date"])
+    if sorted_records:
+        latest = sorted_records[-1]
+        print(f"{share_code}：取得北京银行净值 {latest['date']} {latest['nav']} 【老接口无总资产】")
+    return sorted_records
 
 
 # ==========================================
@@ -1133,7 +1266,6 @@ def render_index(
 # ==========================================
 
 def main():
-
     products = load_products()
     history = load_history()
 
@@ -1143,7 +1275,6 @@ def main():
     updated_count = 0
 
     for product in products:
-
         name = product["name"]
         code = product["share_code"]
 
@@ -1153,69 +1284,39 @@ def main():
         )
 
         try:
-
-            api_records = (
-                get_nav_records(
-                    code
-                )
-            )
-
+            api_records = get_nav_records(code)
         except Exception as error:
-
             print(
                 f"{name}检查失败："
                 f"{type(error).__name__}: "
                 f"{error}"
             )
-
             continue
 
         if not api_records:
-
-            print(
-                f"{name}未取得有效净值"
-            )
-
+            print(f"{name}未取得有效净值")
             continue
 
         success_count += 1
+        changed = merge_product_history(history, code, api_records)
+        latest_record = api_records[-1]
 
-        changed = (
-            merge_product_history(
-                history,
-                code,
-                api_records,
-            )
-        )
-
-        latest_record = (
-            api_records[-1]
-        )
         if changed:
-
             updated_count += 1
-
             print(
                 f"{name}已新增或修正："
                 f"{latest_record['date']} "
                 f"{latest_record['nav']}"
             )
-
         else:
-
-            print(
-                f"{name}暂无新净值"
-            )
-
+            print(f"{name}暂无新净值")
 
     if success_count == 0:
-
         raise RuntimeError(
             "所有产品均未成功取得"
             "北京银行真实净值，"
             "本次不更新网页"
         )
-
 
     HISTORY_FILE.write_text(
         json.dumps(
@@ -1226,12 +1327,7 @@ def main():
         encoding="utf-8",
     )
 
-
-    render_index(
-        products,
-        history,
-    )
-
+    render_index(products, history)
 
     print(
         f"执行完成："
