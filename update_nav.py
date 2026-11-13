@@ -1,12 +1,14 @@
 import json
 import re
 import ssl
+import warnings
 from datetime import date, timedelta
 from pathlib import Path
 
 import requests
 from requests.adapters import HTTPAdapter
 
+warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
 # ==========================================
 # 基础配置
@@ -260,33 +262,11 @@ def prepare_session():
 def get_nav_records(share_code):
     """
     获取指定产品最近30个净值点。
-
-    30条主要用于覆盖7/14个自然日，
-    包括周末及较长节假日。
+    诚享7天29号A：YJ01251204A，北银理财接口KEY用YJ01251204
     """
-
-    payload = {
-        "pageNum": 1,
-        "pageSize": 30,
-        "titleId": TITLE_ID,
-        "prodCode": share_code,
-        "channel": 1,
-        "language": "CN",
-    }
-
-    headers = {
-        "Accept": (
-            "application/json, "
-            "text/plain, */*"
-        ),
-        "Content-Type": "application/json",
-        "Origin": (
-            "https://bankofbeijing.com.cn"
-        ),
-        "Referer": PAGE_URL,
-    }
-
-    if share_code == "YJ01251204A":
+    # 去掉末尾A，用来匹配北银理财接口
+    bare_code = share_code.rstrip("A")
+    if bare_code == "YJ01251204":
 
         new_api_url = (
             "https://www.beijingbobwealth.com.cn"
@@ -296,7 +276,7 @@ def get_nav_records(share_code):
         new_params = {
             "pageSize": 30,
             "pageNumber": 1,
-            "KEY": share_code,
+            "KEY": bare_code,
         }
 
         new_headers = {
@@ -318,11 +298,13 @@ def get_nav_records(share_code):
         }
 
         try:
+            print(f"【{share_code}】尝试调用北银理财总资产接口 KEY={bare_code}")
             new_response = SESSION.get(
                 new_api_url,
                 params=new_params,
                 headers=new_headers,
                 timeout=30,
+                verify=False
             )
 
             new_response.raise_for_status()
@@ -347,9 +329,6 @@ def get_nav_records(share_code):
                 ).strip()
 
                 nav_value = row.get("NAV")
-
-                if product_code != share_code:
-                    continue
 
                 if not re.fullmatch(
                     r"\d{8}",
@@ -394,28 +373,46 @@ def get_nav_records(share_code):
                 latest = new_records[-1]
 
                 print(
-                    f"{share_code}："
-                    f"取得北银理财官网净值 "
+                    f"{share_code}：✅北银理财官网净值 "
                     f"{latest['date']} "
-                    f"{latest['nav']}"
+                    f"{latest['nav']} 总资产={latest.get('total_asset')}"
                 )
 
                 return new_records
 
             print(
-                f"{share_code}："
-                "北银理财官网未返回有效净值，"
+                f"{share_code}：❌北银理财官网未返回有效净值，"
                 "改用北京银行原接口"
             )
 
         except Exception as error:
             print(
-                f"{share_code}："
-                "北银理财官网接口访问失败，"
+                f"{share_code}：❌北银理财官网接口访问失败，"
                 "改用北京银行原接口："
                 f"{type(error).__name__}: "
                 f"{error}"
             )
+    payload = {
+        "pageNum": 1,
+        "pageSize": 30,
+        "titleId": TITLE_ID,
+        "prodCode": share_code,
+        "channel": 1,
+        "language": "CN",
+    }
+
+    headers = {
+        "Accept": (
+            "application/json, "
+            "text/plain, */*"
+        ),
+        "Content-Type": "application/json",
+        "Origin": (
+            "https://bankofbeijing.com.cn"
+        ),
+        "Referer": PAGE_URL,
+    }
+
     response = SESSION.post(
         API_URL,
         json=payload,
@@ -500,7 +497,7 @@ def get_nav_records(share_code):
         print(
             f"{share_code}：取得北京银行净值 "
             f"{latest['date']} "
-            f"{latest['nav']}"
+            f"{latest['nav']} 【老接口无总资产】"
         )
 
     return sorted_records
@@ -670,8 +667,9 @@ def merge_product_history(
 
             changed = True
 
-        elif existing["nav"] != nav_value:
+        elif existing["nav"] != nav_value or existing.get("total_asset") != record.get("total_asset"):
             existing["nav"] = nav_value
+            existing["total_asset"] = record.get("total_asset")
             changed = True
 
     merged_records = sorted(
