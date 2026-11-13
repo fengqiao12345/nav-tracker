@@ -29,7 +29,6 @@ def get_total_asset(prod_code):
 
 def fetch_product_info(prod_code):
     """抓取单位净值、累计净值"""
-    # 这里沿用你原来净值接口，如果你后续要换页面抓净值再改这里
     url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={prod_code}"
     try:
         resp = requests.get(url, headers=HEADERS, timeout=15)
@@ -99,6 +98,9 @@ body{background:#f5f7fa;padding:20px}
 </div>
 """
     for p in product_list:
+        # 增加容错：没有code就跳过这条产品
+        if "code" not in p or "name" not in p:
+            continue
         name = p["name"]
         code = p["code"]
         unit_nav, acc_nav = fetch_product_info(code)
