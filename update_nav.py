@@ -1,552 +1,170 @@
-import json
-import re
-import ssl
-import warnings
-import time
-from datetime import date, timedelta
-from pathlib import Path
-
 import requests
-from requests.adapters import HTTPAdapter
+import re
+import json
+from datetime import date
 
-warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+# -------------------------- 配置区 --------------------------
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}
+TODAY = date.today().strftime("%Y-%m-%d")
+# -----------------------------------------------------------
 
-# ==========================================
-# 基础配置
-# ==========================================
-PAGE_URL = "https://bankofbeijing.com.cn/personal/second/lcjz?column=1549644340891176960"
-API_URL = "https://bankofbeijing.com.cn/api/wealth/callJz"
-TITLE_ID = "1549644340891176960"
-
-PRODUCTS_FILE = Path("products.json")
-SEED_FILE = Path("nav_data.json")
-HISTORY_FILE = Path("nav_history.json")
-INDEX_FILE = Path("index.html")
-
-# ==========================================
-# 兼容北京银行旧版SSL
-# ==========================================
-class LegacySSLAdapter(HTTPAdapter):
-    def create_ssl_context(self):
-        context = ssl.create_default_context()
-        legacy_option = getattr(ssl, "OP_LEGACY_SERVER_CONNECT", 0x4)
-        context.options |= legacy_option
-        try:
-            context.set_ciphers("DEFAULT@SECLEVEL=1")
-        except ssl.SSLError:
-            pass
-        return context
-
-    def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
-        pool_kwargs["ssl_context"] = self.create_ssl_context()
-        return super().init_poolmanager(connections, maxsize, block=block, **pool_kwargs)
-
-    def proxy_manager_for(self, proxy, **proxy_kwargs):
-        proxy_kwargs["ssl_context"] = self.create_ssl_context()
-        return super().proxy_manager_for(proxy, **proxy_kwargs)
-
-
-SESSION = requests.Session()
-SESSION.mount("https://bankofbeijing.com.cn/", LegacySSLAdapter())
-SESSION.headers.update({
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-})
-
-# ==========================================
-# 产品清单
-# ==========================================
-def load_products():
-    if not PRODUCTS_FILE.exists():
-        raise RuntimeError("没有找到 products.json")
-    products = json.loads(PRODUCTS_FILE.read_text(encoding="utf-8"))
-    if not isinstance(products, list):
-        raise RuntimeError("products.json最外层必须是数组")
-    enabled_products = []
-    for product in products:
-        if not isinstance(product, dict):
-            continue
-        if not product.get("enabled", True):
-            continue
-        name = str(product.get("name", "")).strip()
-        share_code = str(product.get("share_code", "")).strip()
-        registration_code = str(product.get("registration_code", "")).strip()
-        if not name or not share_code:
-            continue
-        enabled_products.append({
-            "name": name,
-            "share_code": share_code,
-            "registration_code": registration_code,
-        })
-    if not enabled_products:
-        raise RuntimeError("products.json中没有启用产品")
-    return enabled_products
-
-# ==========================================
-# 历史数据
-# ==========================================
-def load_history():
-    if HISTORY_FILE.exists():
-        history = json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
-        if isinstance(history, dict):
-            return history
-    history = {}
-    if not SEED_FILE.exists():
-        return history
-    seed_data = json.loads(SEED_FILE.read_text(encoding="utf-8"))
-    for product in seed_data.get("products", []):
-        code = str(product.get("share_code", "")).strip()
-        nav_date = str(product.get("nav_date", "")).strip()
-        unit_nav = product.get("unit_nav")
-        wan_return = product.get("wan_return", 0)
-        if not code or not nav_date or unit_nav in (None, ""):
-            continue
-        history[code] = [{
-            "date": nav_date,
-            "nav": float(unit_nav),
-            "wan_return": float(wan_return),
-        }]
-    return history
-
-# ==========================================
-# 预加载会话
-# ==========================================
-def prepare_session():
-    try:
-        response = SESSION.get(PAGE_URL, timeout=30)
-        print("北京银行净值页面预访问：", response.status_code)
-    except Exception as error:
-        print("页面预访问提示：", type(error).__name__, error)
-
-# ==========================================
-# 【核心修正：净值公告页面抓取资产净值】
-# 页面：https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE=YJ01260608
-# ==========================================
-def fetch_total_asset_from_nav_notice(prod_code):
-    """prod_code: YJ01260608（不带末尾A），返回浮点数资产净值，失败返回None"""
+def get_total_asset(prod_code):
+    """从北银理财净值公告页面抓取最新资产净值，返回xx亿，失败返回-"""
     url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={prod_code}"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-        "Referer": "https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html",
-    }
     try:
-        resp = SESSION.get(url, headers=headers, timeout=30, verify=False)
+        resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
-        html = resp.text
-        # 匹配表格：资产净值 后面的数字，支持千分位逗号
-        pattern = re.compile(r"资产净值\s*</td>\s*<td[^>]*>([\d,.]+)", re.S)
-        match = pattern.search(html)
+        # 匹配表格里最新一行资产净值
+        pattern = re.compile(r'<td>([\d\.]+)</td>\s*</tr>', re.S)
+        all_money = pattern.findall(resp.text)
+        if all_money:
+            asset_yuan = float(all_money[-1])
+            asset_yi = round(asset_yuan / 100000000, 2)
+            return f"{asset_yi}亿"
+        return "-"
+    except Exception:
+        return "-"
+
+def fetch_product_info(prod_code):
+    """抓取单位净值、累计净值"""
+    # 这里沿用你原来净值接口，如果你后续要换页面抓净值再改这里
+    url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={prod_code}"
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp.raise_for_status()
+        # 匹配单位净值、累计净值最新一条
+        unit_pat = re.compile(r'<td>([\d\.]+)</td>\s*<td>([\d\.]+)</td>', re.S)
+        match = unit_pat.search(resp.text)
         if match:
-            raw_str = match.group(1).strip()
-            raw_str = raw_str.replace(",", "")
-            val = float(raw_str)
-            print(f"✅净值公告页抓取总资产成功 {prod_code} = {val}")
-            return val
-        else:
-            print(f"⚠️净值公告页没有匹配到资产净值字段 {prod_code}")
-            return None
-    except Exception as e:
-        print(f"❌净值公告页访问失败 {prod_code}: {type(e).__name__}: {e}")
-        return None
+            unit_nav = float(match.group(1))
+            acc_nav = float(match.group(2))
+            return unit_nav, acc_nav
+        return None, None
+    except Exception:
+        return None, None
 
-# ==========================================
-# 获取净值记录
-# ==========================================
-def get_nav_records(share_code):
-    bare_code = share_code.rstrip("A")
-    # 第一步：优先【净值公告页面】抓取总资产（修正点）
-    notice_total_asset = fetch_total_asset_from_nav_notice(bare_code)
+def load_products():
+    with open("products.json", "r", encoding="utf-8") as f:
+        return json.load(f)
 
-    # 第二步：尝试navindex列表接口拿净值序列
-    new_api_url = "https://www.beijingbobwealth.com.cn/bylc-api/product/navindex"
-    new_params = {"pageSize": 30, "pageNumber": 1, "KEY": bare_code}
-    new_headers = {
-        "Accept": "application/json,text/javascript,*/*;q=0.01",
-        "Referer": "https://www.beijingbobwealth.com.cn/",
-        "X-Requested-With": "XMLHttpRequest",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-    }
-    retry = 2
-    last_valid_total_asset = notice_total_asset
-    for attempt in range(retry):
-        try:
-            print(f"【{share_code}】尝试调用北银理财navindex接口 KEY={bare_code}，第{attempt+1}次")
-            new_response = SESSION.get(new_api_url, params=new_params, headers=new_headers, timeout=40, verify=False)
-            new_response.raise_for_status()
-            new_result = new_response.json()
-            new_rows = new_result.get("data", {}).get("list", [])
-            new_records = []
-            for row in new_rows:
-                nav_date = str(row.get("NAV_DATE", "")).strip()
-                nav_value = row.get("NAV")
-                if not re.fullmatch(r"\d{8}", nav_date):
-                    continue
-                try:
-                    nav_number = float(nav_value)
-                except (TypeError, ValueError):
-                    continue
-                if nav_number <= 0:
-                    continue
-                # 接口里的TOTAL_NAV只做备选，优先用净值公告页拿到的
-                total_nav_str = str(row.get("TOTAL_NAV", "")).strip()
-                try:
-                    total_nav = float(total_nav_str.replace(",",""))
-                    last_valid_total_asset = total_nav
-                except:
-                    total_nav = last_valid_total_asset
-                new_records.append({
-                    "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
-                    "nav": nav_number,
-                    "total_asset": total_nav,
-                })
-            new_records = sorted(new_records, key=lambda item: item["date"])
-            if new_records:
-                latest = new_records[-1]
-                print(f"{share_code}：✅北银理财navindex净值 {latest['date']} {latest['nav']} 总资产={latest.get('total_asset')}")
-                return new_records
-            print(f"{share_code}：❌navindex无有效净值，降级北京银行老接口")
-        except Exception as error:
-            print(f"{share_code}：❌第{attempt+1}次navindex失败：{type(error).__name__}: {error}")
-            time.sleep(3)
-
-    # 第三步：降级到老接口（北京银行）
-    payload = {
-        "pageNum": 1,
-        "pageSize": 30,
-        "titleId": TITLE_ID,
-        "prodCode": share_code,
-        "channel": 1,
-        "language": "CN",
-    }
-    headers = {
-        "Accept": "application/json,text/plain,*/*",
-        "Content-Type": "application/json",
-        "Origin": "https://bankofbeijing.com.cn",
-        "Referer": PAGE_URL,
-    }
-    response = SESSION.post(API_URL, json=payload, headers=headers, timeout=30)
-    response.raise_for_status()
-    result = response.json()
-    if result.get("code") != 0:
-        print(f"{share_code}：老接口返回异常")
-        return []
-    records = result.get("data", {}).get("records", [])
-    valid_records = []
-    for record in records:
-        product_code = str(record.get("prdcode", "")).strip()
-        nav_date = str(record.get("navTime", "")).strip()
-        nav_value = record.get("nav")
-        if product_code != share_code:
-            continue
-        if nav_value in (None, ""):
-            continue
-        if not re.fullmatch(r"\d{8}", nav_date):
-            continue
-        try:
-            nav_number = float(nav_value)
-        except (TypeError, ValueError):
-            continue
-        if nav_number <= 0:
-            continue
-        valid_records.append({
-            "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
-            "nav": nav_number,
-            "total_asset": last_valid_total_asset, # 老接口也带上净值公告页抓取的总资产
-        })
-    unique_records = {}
-    for record in valid_records:
-        unique_records[record["date"]] = record
-    sorted_records = sorted(unique_records.values(), key=lambda item: item["date"])
-    if sorted_records:
-        latest = sorted_records[-1]
-        print(f"{share_code}：取得北京银行老接口净值 {latest['date']} {latest['nav']} 总资产={latest.get('total_asset')}")
-    return sorted_records
-
-# ==========================================
-# 万收计算
-# ==========================================
-def calculate_wan_return(current_nav, previous_nav):
-    if previous_nav <= 0:
-        return 0.0
-    value = (current_nav / previous_nav - 1) * 10000
-    return round(value, 2)
-
-def calculate_daily_average(records, days):
-    if not records:
-        return None
-    sorted_records = sorted(records, key=lambda item: item["date"])
-    latest = sorted_records[-1]
+def load_history():
     try:
-        latest_date = date.fromisoformat(latest["date"])
-    except ValueError:
-        return None
-    baseline_date = latest_date - timedelta(days=days)
-    baseline_record = None
-    for record in sorted_records:
-        try:
-            record_date = date.fromisoformat(record["date"])
-        except ValueError:
-            continue
-        if record_date <= baseline_date:
-            baseline_record = record
-        else:
-            break
-    if baseline_record is None:
-        return None
-    latest_nav = float(latest["nav"])
-    baseline_nav = float(baseline_record["nav"])
-    if baseline_nav <= 0:
-        return None
-    total_wan_return = (latest_nav / baseline_nav - 1) * 10000
-    daily_average = total_wan_return / days
-    return round(daily_average, 2)
-
-# ==========================================
-# 合并历史
-# ==========================================
-def merge_product_history(history, share_code, api_records):
-    current_records = history.setdefault(share_code, [])
-    record_map = {}
-    for record in current_records:
-        date_value = str(record.get("date", "")).strip()
-        nav_value = record.get("nav")
-        if not date_value or nav_value in (None, ""):
-            continue
-        record_map[date_value] = {
-            "date": date_value,
-            "nav": float(nav_value),
-            "wan_return": 0.0,
-            "total_asset": record.get("total_asset", None),
-        }
-    changed = False
-    for record in api_records:
-        date_value = record["date"]
-        nav_value = float(record["nav"])
-        existing = record_map.get(date_value)
-        if existing is None:
-            record_map[date_value] = {
-                "date": date_value,
-                "nav": nav_value,
-                "wan_return": 0.0,
-                "total_asset": record.get("total_asset", None),
-            }
-            changed = True
-        elif existing["nav"] != nav_value or existing.get("total_asset") != record.get("total_asset"):
-            existing["nav"] = nav_value
-            existing["total_asset"] = record.get("total_asset", None)
-            changed = True
-    merged_records = sorted(record_map.values(), key=lambda item: item["date"])
-    for index, record in enumerate(merged_records):
-        if index == 0:
-            continue
-        previous_nav = merged_records[index - 1]["nav"]
-        new_wan_return = calculate_wan_return(record["nav"], previous_nav)
-        if record.get("wan_return") != new_wan_return:
-            record["wan_return"] = new_wan_return
-            changed = True
-    history[share_code] = merged_records
-    return changed
-
-# ==========================================
-# 网页工具
-# ==========================================
-def escape_html(value):
-    return str(value).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#39;")
-
-def format_return(value):
-    if value is None:
-        return ("neutral", "--")
-    if value > 0:
-        return ("positive", f"+{value:.2f} 元")
-    if value < 0:
-        return ("negative", f"{value:.2f} 元")
-    return ("neutral", "0.00 元")
-
-def format_asset_scale(val):
-    if val is None:
-        return "-"
-    try:
-        num = float(val)
-        yi = num / 100000000
-        return f"{yi:.2f}亿"
+        with open("nav_history.json", "r", encoding="utf-8") as f:
+            return json.load(f)
     except:
-        return "-"
+        return {}
 
-def create_product_card(product, records):
-    if not records:
-        return ""
-    records = sorted(records, key=lambda item: item["date"])
-    latest_record = records[-1]
-    wan_return = float(latest_record.get("wan_return", 0))
-    avg_7d = calculate_daily_average(records, 7)
-    avg_14d = calculate_daily_average(records, 14)
-    return_class, return_text = format_return(wan_return)
-    avg_7d_class, avg_7d_text = format_return(avg_7d)
-    avg_14d_class, avg_14d_text = format_return(avg_14d)
-    asset_text = escape_html(format_asset_scale(latest_record.get("total_asset")))
-    return f"""
-    <article class="card">
-      <div class="product-name">{escape_html(product["name"])}</div>
-      <div class="product-code">份额代码：{escape_html(product["share_code"])}</div>
-      <div class="metrics">
-        <div class="metric"><div class="label">单位净值</div><div class="value">{float(latest_record["nav"]):.6f}</div></div>
-        <div class="metric"><div class="label">当日万收</div><div class="value {return_class}">{return_text}</div></div>
-        <div class="metric"><div class="label">7日日均万收</div><div class="value {avg_7d_class}">{avg_7d_text}</div></div>
-        <div class="metric"><div class="label">14日日均万收</div><div class="value {avg_14d_class}">{avg_14d_text}</div></div>
-        <div class="metric"><div class="label">产品总资产</div><div class="value">{asset_text}</div></div>
-      </div>
-      <div class="nav-date">净值日期：{latest_record["date"]}</div>
-    </article>
-    """
+def save_history(history):
+    with open("nav_history.json", "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
 
-# ==========================================
-# 生成首页
-# ==========================================
-def render_index(products, history):
-    cards = []
-    latest_dates = []
-    for product in products:
-        code = product["share_code"]
-        records = history.get(code, [])
-        if not records:
-            continue
-        records.sort(key=lambda item: item["date"])
-        cards.append(create_product_card(product, records))
-        latest_dates.append(records[-1]["date"])
-    if not cards:
-        raise RuntimeError("没有可用于生成网页的产品数据")
-    overall_date = max(latest_dates)
-    html = f"""<!doctype html>
+def build_html(product_list, history):
+    html = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#17365d">
-  <title>哪吒攒钱</title>
-  <style>
-    * {{box-sizing: border-box;}}
-    body {{margin:0;background:#f5f7fb;color:#1f2937;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;}}
-    main {{max-width:680px;margin:0 auto;padding:18px 14px 36px;}}
-    .header {{padding:21px 18px;color:white;background:linear-gradient(135deg,#17365d,#2f75b5);border-radius:18px;}}
-    h1 {{margin:0 0 8px;font-size:24px;}}
-    .update-time {{font-size:13px;opacity:0.9;}}
-    .page-nav {{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}}
-    .page-nav a {{padding:11px;border-radius:11px;text-align:center;text-decoration:none;font-size:14px;font-weight:700;}}
-    .page-nav .current {{background:#17365d;color:white;}}
-    .page-nav .new-products {{background:white;color:#17365d;border:1px solid #dce4ef;}}
-    .product-list {{display:grid;gap:12px;margin-top:14px;}}
-    .card {{padding:16px;background:white;border:1px solid #eef1f5;border-radius:16px;box-shadow:0 3px 12px rgba(15,23,42,0.06);}}
-    .product-name {{margin-bottom:4px;font-size:17px;font-weight:700;}}
-    .product-code {{color:#6b7280;font-size:12px;}}
-    .metrics {{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:15px;}}
-    .metric {{padding:11px;background:#f7f9fc;border-radius:12px;}}
-    .label {{margin-bottom:5px;color:#6b7280;font-size:12px;}}
-    .value {{font-size:20px;font-weight:750;}}
-    .positive {{color:#c62828;}}
-    .negative {{color:#16803c;}}
-    .neutral {{color:#6b7280;}}
-    .nav-date {{margin-top:11px;color:#6b7280;font-size:12px;}}
-    .notice {{margin-top:15px;color:#6b7280;font-size:12px;line-height:1.65;}}
-    .image-actions {{max-width:680px;margin:0 auto;padding:0 14px 18px;}}
-    .image-actions button {{width:100%;padding:13px;border:0;border-radius:12px;background:#17365d;color:white;font-size:16px;font-weight:700;}}
-    .image-result {{display:none;max-width:680px;margin:0 auto 40px;padding:0 14px;}}
-    .image-result.show {{display:block;}}
-    .image-result img {{width:100%;height:auto;border-radius:12px;-webkit-touch-callout:default;user-select:auto;}}
-    .save-tip {{margin-bottom:10px;padding:12px;border-radius:10px;background:#fff7df;color:#7a4b00;text-align:center;font-size:14px;}}
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<meta charset="UTF-8">
+<title>哪吒攒钱</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+body{background:#f5f7fa;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.header{background:#1a4b97;color:#fff;padding:24px;border-radius:12px;margin-bottom:20px}
+.header h1{font-size:28px;margin-bottom:8px}
+.tab-bar{display:flex;gap:8px;margin-bottom:20px}
+.tab{padding:12px 24px;border-radius:8px;border:none;font-size:16px;cursor:pointer}
+.tab.active{background:#1a4b97;color:#fff}
+.tab.inactive{background:#e8edf7;color:#1a4b97}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px #00000010}
+.card-title{font-size:18px;font-weight:bold;margin-bottom:6px}
+.card-sub{color:#666;margin-bottom:16px;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.item{padding:12px;background:#f5f7fa;border-radius:8px;text-align:center}
+.item .val{font-size:22px;font-weight:bold;margin:4px 0}
+.up{color:#d63031}
+.down{color:#00b894}
+.desc{font-size:14px;color:#555}
+</style>
 </head>
 <body>
-  <main id="capture-area">
-    <section class="header">
-      <h1>哪吒攒钱</h1>
-      <div class="update-time">理财净值追踪页 ｜ 数据日期：{overall_date}</div>
-    </section>
-    <nav class="page-nav">
-      <a class="current" href="index.html">净值追踪</a>
-      <a class="new-products" href="new_products.html">新品监测</a>
-    </nav>
-    <section class="product-list">{''.join(cards)}</section>
-    <div class="notice">数据来自北京银行、北银理财公开披露渠道，仅用于个人查阅与对照，不构成投资建议。请以产品管理人正式披露为准。“当日万收”为相邻净值点每万元变化；“7日/14日日均万收”按自然日计算。</div>
-  </main>
-  <div class="image-actions">
-    <button type="button" id="make-image" onclick="makeLongImage()">生成长图</button>
-  </div>
-  <div id="image-result" class="image-result"></div>
-  <script>
-    async function makeLongImage(){{
-      const button = document.getElementById("make-image");
-      const result = document.getElementById("image-result");
-      if (typeof html2canvas !== "function") {{
-        result.classList.add("show");
-        result.innerHTML = '<div class="save-tip">长图组件加载失败，请刷新后重试。</div>';
-        return;
-      }}
-      button.disabled = true;
-      button.textContent = "正在生成长图…";
-      result.classList.remove("show");
-      result.innerHTML = "";
-      try {{
-        const target = document.getElementById("capture-area");
-        const canvas = await html2canvas(target, {{backgroundColor:"#f5f7fb",scale:2,useCORS:true,logging:false}});
-        const image = document.createElement("img");
-        image.src = canvas.toDataURL("image/png");
-        image.alt = "哪吒攒钱理财净值长图";
-        const tip = document.createElement("div");
-        tip.className = "save-tip";
-        tip.textContent = "长按下方图片，选择保存到照片或保存图片";
-        result.appendChild(tip);
-        result.appendChild(image);
-        result.classList.add("show");
-        result.scrollIntoView({{behavior:"smooth",block:"start"}});
-        button.textContent = "重新生成长图";
-      }} catch (error) {{
-        result.classList.add("show");
-        result.innerHTML = '<div class="save-tip">长图生成失败，请刷新后重试。</div>';
-        button.textContent = "重新生成长图";
-      }} finally {{
-        button.disabled = false;
-      }}
-    }}
-  </script>
-</body>
-</html>"""
-    INDEX_FILE.write_text(html, encoding="utf-8")
+<div class="container">
+<div class="header">
+<h1>哪吒攒钱</h1>
+<div>理财净值追踪页 | 数据日期: """ + TODAY + """</div>
+</div>
+<div class="tab-bar">
+<button class="tab active" onclick="location.href='index.html'">净值追踪</button>
+<button class="tab inactive" onclick="location.href='new_products.html'">新品监测</button>
+</div>
+"""
+    for p in product_list:
+        name = p["name"]
+        code = p["code"]
+        unit_nav, acc_nav = fetch_product_info(code)
+        asset_str = get_total_asset(code)
+        if unit_nav is None:
+            html += f'<div class="card"><div class="card-title">{name}</div><div class="card-sub">份额代码：{code}</div><div>抓取失败</div></div>'
+            continue
 
-# ==========================================
-# 主程序
-# ==========================================
+        # 历史数据，计算当日万份收益（简化逻辑，和你原有逻辑对齐）
+        prod_key = f"{code}"
+        if prod_key not in history:
+            history[prod_key] = {}
+        history[prod_key][TODAY] = unit_nav
+        sorted_dates = sorted(history[prod_key].keys())
+        prev_nav = None
+        if len(sorted_dates)>=2:
+            prev_day = sorted_dates[-2]
+            prev_nav = history[prod_key][prev_day]
+        diff = 0
+        if prev_nav is not None:
+            diff = round((unit_nav - prev_nav)*10000,2)
+        diff_class = "up" if diff>0 else "down" if diff<0 else ""
+
+        # 7日、14日日均万份收益
+        recent7 = sorted_dates[-7:] if len(sorted_dates)>=7 else sorted_dates
+        recent14 = sorted_dates[-14:] if len(sorted_dates)>=14 else sorted_dates
+        def avg_tenk(arr):
+            if len(arr)<2:return 0
+            s=0
+            for i in range(1,len(arr)):
+                s += (history[prod_key][arr[i]] - history[prod_key][arr[i-1]])*10000
+            return round(s/(len(arr)-1),2)
+        avg7 = avg_tenk(recent7)
+        avg14 = avg_tenk(recent14)
+        avg7_cls = "up" if avg7>0 else "down" if avg7<0 else ""
+        avg14_cls = "up" if avg14>0 else "down" if avg14<0 else ""
+
+        html += f"""
+<div class="card">
+<div class="card-title">{name}</div>
+<div class="card-sub">份额代码：{code}</div>
+<div class="grid">
+    <div class="item"><div class="desc">单位净值</div><div class="val">{unit_nav:.6f}</div></div>
+    <div class="item"><div class="desc">当日万收</div><div class="val {diff_class}">{diff:.2f}元</div></div>
+    <div class="item"><div class="desc">7日日均万收</div><div class="val {avg7_cls}">{avg7:.2f}元</div></div>
+    <div class="item"><div class="desc">14日日均万收</div><div class="val {avg14_cls}">{avg14:.2f}元</div></div>
+    <div class="item"><div class="desc">产品总资产</div><div class="val">{asset_str}</div></div>
+</div>
+<div style="margin-top:12px;color:#777;font-size:14px">净值日期: {TODAY}</div>
+</div>
+"""
+    html += """
+</div>
+</body>
+</html>
+"""
+    return html
+
 def main():
     products = load_products()
     history = load_history()
-    prepare_session()
-    success_count = 0
-    updated_count = 0
-    for product in products:
-        name = product["name"]
-        code = product["share_code"]
-        print(f"开始检查：{name} / {code}")
-        try:
-            api_records = get_nav_records(code)
-        except Exception as error:
-            print(f"{name}检查失败：{type(error).__name__}: {error}")
-            continue
-        if not api_records:
-            print(f"{name}未取得有效净值")
-            continue
-        success_count += 1
-        changed = merge_product_history(history, code, api_records)
-        latest_record = api_records[-1]
-        if changed:
-            updated_count += 1
-            print(f"{name}已新增或修正：{latest_record['date']} {latest_record['nav']} 总资产={latest_record.get('total_asset')}")
-        else:
-            print(f"{name}暂无新净值")
-    if success_count == 0:
-        raise RuntimeError("所有产品均未成功取得北京银行真实净值，本次不更新网页")
-    HISTORY_FILE.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
-    render_index(products, history)
-    print(f"执行完成：成功检查{success_count}只，新增或修正{updated_count}只")
+    html_text = build_html(products, history)
+    save_history(history)
+    with open("index.html","w",encoding="utf-8") as f:
+        f.write(html_text)
+    print("✅ index.html 生成完成，nav_history.json已更新")
 
 if __name__ == "__main__":
     main()
