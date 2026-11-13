@@ -22,7 +22,8 @@ def fetch_nav(code):
             acc = float(tds[3].get_text(strip=True))
             return unit, acc
         return None, None
-    except:
+    except Exception as e:
+        print("抓取异常：",e)
         return None, None
 
 def load_products():
@@ -58,13 +59,19 @@ body{background:#f5f7fa;padding:20px}
 </div>
 """
     for p in prods:
-        name = p["name"]
-        code = p["code"]
+        name = p.get("name","未命名产品")
+        code = p.get("share_code","")
+        enable = p.get("enabled",True)
+        if not enable:
+            continue
+        if not code:
+            html += f'<div class="card"><h3>{name}</h3><p style="color:red">❌ 缺少share_code</p></div>'
+            continue
         unit,acc = fetch_nav(code)
         if unit is None:
-            html += f'<div class="card"><h3>{name}</h3><p>代码：{code}</p><p style="color:red">❌ 抓取失败</p></div>'
+            html += f'<div class="card"><h3>{name}</h3><p>份额代码：{code}</p><p style="color:red">❌ 抓取失败</p></div>'
         else:
-            html += f'<div class="card"><h3>{name}</h3><p>代码：{code}</p><p>单位净值：{unit:.6f}</p><p>累计净值：{acc:.6f}</p></div>'
+            html += f'<div class="card"><h3>{name}</h3><p>份额代码：{code}</p><p>单位净值：{unit:.6f}</p><p>累计净值：{acc:.6f}</p></div>'
     html += "</div></body></html>"
     return html
 
