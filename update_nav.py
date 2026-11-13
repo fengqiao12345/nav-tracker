@@ -367,6 +367,12 @@ def get_nav_records(share_code):
                 if nav_number <= 0:
                     continue
 
+                total_nav_str = str(row.get("TOTAL_NAV", "")).strip()
+                try:
+                    total_nav = float(total_nav_str)
+                except:
+                    total_nav = None
+
                 new_records.append(
                     {
                         "date": (
@@ -375,6 +381,7 @@ def get_nav_records(share_code):
                             f"{nav_date[6:8]}"
                         ),
                         "nav": nav_number,
+                        "total_asset": total_nav,
                     }
                 )
 
@@ -637,12 +644,8 @@ def merge_product_history(
         record_map[date_value] = {
             "date": date_value,
             "nav": float(nav_value),
-            "wan_return": float(
-                record.get(
-                    "wan_return",
-                    0,
-                )
-            ),
+            "wan_return": 0.0,
+            "total_asset": record.get("total_asset", None),
         }
 
     changed = False
@@ -662,7 +665,9 @@ def merge_product_history(
                 "date": date_value,
                 "nav": nav_value,
                 "wan_return": 0.0,
+                "total_asset": record.get("total_asset", None),
             }
+
             changed = True
 
         elif existing["nav"] != nav_value:
@@ -750,6 +755,17 @@ def format_return(value):
         "0.00 元",
     )
 
+def format_asset_scale(val):
+    """把资产净值转为 X.XX亿，None或者异常返回 -"""
+    if val is None:
+        return "-"
+    try:
+        num = float(val)
+        yi = num / 100000000
+        return f"{yi:.2f}亿"
+    except:
+        return "-"
+
 
 def create_product_card(
     product,
@@ -809,6 +825,8 @@ def create_product_card(
         avg_14d
     )
 
+    asset_text = escape_html(format_asset_scale(latest_record.get("total_asset")))
+
     return f"""
     <article class="card">
       <div class="product-name">
@@ -859,6 +877,16 @@ def create_product_card(
 
           <div class="value {avg_14d_class}">
             {avg_14d_text}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">
+            产品总资产
+          </div>
+
+          <div class="value">
+            {asset_text}
           </div>
         </div>
 
@@ -1039,7 +1067,7 @@ def render_index(
 
     .metrics {{
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
       margin-top: 15px;
     }}
@@ -1402,14 +1430,6 @@ def main():
                 api_records,
             )
         )
-
-        if code == "YJ01251204A":
-            api_records = [
-                {
-                    "date": "2026-10-30",
-                    "nav": 1.015061
-                }
-            ]
 
         latest_record = (
             api_records[-1]
