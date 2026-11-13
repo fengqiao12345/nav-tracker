@@ -119,31 +119,34 @@ def prepare_session():
         print("页面预访问提示：", type(error).__name__, error)
 
 # ==========================================
-# 【核心：从产品详情页HTML抓取资产净值】
+# 【核心修正：净值公告页面抓取资产净值】
+# 页面：https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE=YJ01260608
 # ==========================================
-def fetch_total_asset_from_detail(prod_code):
-    """prod_code: YJ01260608（不带A），返回浮点数资产净值，失败返回None"""
-    url = f"https://www.beijingbobwealth.com.cn/products_index/index.html?PROD_CODE={prod_code}"
+def fetch_total_asset_from_nav_notice(prod_code):
+    """prod_code: YJ01260608（不带末尾A），返回浮点数资产净值，失败返回None"""
+    url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={prod_code}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-        "Referer": "https://www.beijingbobwealth.com.cn/",
+        "Referer": "https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html",
     }
     try:
         resp = SESSION.get(url, headers=headers, timeout=30, verify=False)
         resp.raise_for_status()
         html = resp.text
-        # 正则匹配：资产净值后面的数字
-        pattern = re.compile(r"资产净值\s*</td>\s*<td[^>]*>([\d.]+)", re.S)
+        # 匹配表格：资产净值 后面的数字，支持千分位逗号
+        pattern = re.compile(r"资产净值\s*</td>\s*<td[^>]*>([\d,.]+)", re.S)
         match = pattern.search(html)
         if match:
-            val = float(match.group(1))
-            print(f"✅详情页抓取总资产成功 {prod_code} = {val}")
+            raw_str = match.group(1).strip()
+            raw_str = raw_str.replace(",", "")
+            val = float(raw_str)
+            print(f"✅净值公告页抓取总资产成功 {prod_code} = {val}")
             return val
         else:
-            print(f"⚠️详情页没有匹配到资产净值字段 {prod_code}")
+            print(f"⚠️净值公告页没有匹配到资产净值字段 {prod_code}")
             return None
     except Exception as e:
-        print(f"❌详情页访问失败 {prod_code}: {type(e).__name__}: {e}")
+        print(f"❌净值公告页访问失败 {prod_code}: {type(e).__name__}: {e}")
         return None
 
 # ==========================================
@@ -151,8 +154,8 @@ def fetch_total_asset_from_detail(prod_code):
 # ==========================================
 def get_nav_records(share_code):
     bare_code = share_code.rstrip("A")
-    # 第一步：优先详情页抓取总资产
-    detail_total_asset = fetch_total_asset_from_detail(bare_code)
+    # 第一步：优先【净值公告页面】抓取总资产（修正点）
+    notice_total_asset = fetch_total_asset_from_nav_notice(bare_code)
 
     # 第二步：尝试navindex列表接口拿净值序列
     new_api_url = "https://www.beijingbobwealth.com.cn/bylc-api/product/navindex"
@@ -164,7 +167,7 @@ def get_nav_records(share_code):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
     }
     retry = 2
-    last_valid_total_asset = detail_total_asset
+    last_valid_total_asset = notice_total_asset
     for attempt in range(retry):
         try:
             print(f"【{share_code}】尝试调用北银理财navindex接口 KEY={bare_code}，第{attempt+1}次")
@@ -184,10 +187,10 @@ def get_nav_records(share_code):
                     continue
                 if nav_number <= 0:
                     continue
-                # 接口里的TOTAL_NAV只做备选，优先用详情页拿到的
+                # 接口里的TOTAL_NAV只做备选，优先用净值公告页拿到的
                 total_nav_str = str(row.get("TOTAL_NAV", "")).strip()
                 try:
-                    total_nav = float(total_nav_str)
+                    total_nav = float(total_nav_str.replace(",",""))
                     last_valid_total_asset = total_nav
                 except:
                     total_nav = last_valid_total_asset
@@ -248,7 +251,7 @@ def get_nav_records(share_code):
         valid_records.append({
             "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
             "nav": nav_number,
-            "total_asset": last_valid_total_asset, # 即使老接口，也带上详情页抓到的总资产
+            "total_asset": last_valid_total_asset, # 老接口也带上净值公告页抓取的总资产
         })
     unique_records = {}
     for record in valid_records:
@@ -330,7 +333,7 @@ def merge_product_history(history, share_code, api_records):
             changed = True
         elif existing["nav"] != nav_value or existing.get("total_asset") != record.get("total_asset"):
             existing["nav"] = nav_value
-            existing["total_asset"] = record.get("total_asset")
+            existing["total_asset"] = record.get("total_asset", None)
             changed = True
     merged_records = sorted(record_map.values(), key=lambda item: item["date"])
     for index, record in enumerate(merged_records):
