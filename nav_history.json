@@ -3,645 +3,772 @@
     {
       "date": "2026-10-11",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-12",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-13",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-14",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-15",
       "nav": 1.000118,
-      "wan_return": 1.18
+      "wan_return": 1.18,
+      "total_asset": null
     },
     {
       "date": "2026-10-16",
       "nav": 1.0002,
-      "wan_return": 0.82
+      "wan_return": 0.82,
+      "total_asset": null
     },
     {
       "date": "2026-10-19",
       "nav": 1.000447,
-      "wan_return": 2.47
+      "wan_return": 2.47,
+      "total_asset": null
     },
     {
       "date": "2026-10-20",
       "nav": 1.000553,
-      "wan_return": 1.06
+      "wan_return": 1.06,
+      "total_asset": null
     },
     {
       "date": "2026-10-21",
       "nav": 1.000659,
-      "wan_return": 1.06
+      "wan_return": 1.06,
+      "total_asset": null
     },
     {
       "date": "2026-10-22",
       "nav": 1.000767,
-      "wan_return": 1.08
+      "wan_return": 1.08,
+      "total_asset": null
     },
     {
       "date": "2026-10-23",
       "nav": 1.00085,
-      "wan_return": 0.83
+      "wan_return": 0.83,
+      "total_asset": null
     },
     {
       "date": "2026-10-26",
       "nav": 1.001113,
-      "wan_return": 2.63
+      "wan_return": 2.63,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.001195,
-      "wan_return": 0.82
+      "wan_return": 0.82,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.001289,
-      "wan_return": 0.94
+      "wan_return": 0.94,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.001371,
-      "wan_return": 0.82
+      "wan_return": 0.82,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.001399,
-      "wan_return": 0.28
+      "wan_return": 0.28,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.001485,
-      "wan_return": 0.86
+      "wan_return": 0.86,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.001513,
-      "wan_return": 0.28
+      "wan_return": 0.28,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.001614,
-      "wan_return": 1.01
+      "wan_return": 1.01,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.001721,
-      "wan_return": 1.07
+      "wan_return": 1.07,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.00182,
-      "wan_return": 0.99
+      "wan_return": 0.99,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.002236,
-      "wan_return": 4.15
+      "wan_return": 4.15,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.002314,
-      "wan_return": 0.78
+      "wan_return": 0.78,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.002349,
-      "wan_return": 0.35
+      "wan_return": 0.35,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.002339,
-      "wan_return": -0.1
+      "wan_return": -0.1,
+      "total_asset": null
     }
   ],
   "YJ01260445A": [
     {
       "date": "2026-09-12",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-13",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-14",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-15",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-16",
       "nav": 1.000175,
-      "wan_return": 1.75
+      "wan_return": 1.75,
+      "total_asset": null
     },
     {
       "date": "2026-09-17",
       "nav": 1.00033,
-      "wan_return": 1.55
+      "wan_return": 1.55,
+      "total_asset": null
     },
     {
       "date": "2026-09-18",
       "nav": 1.00084,
-      "wan_return": 5.1
+      "wan_return": 5.1,
+      "total_asset": null
     },
     {
       "date": "2026-09-21",
       "nav": 1.001281,
-      "wan_return": 4.41
+      "wan_return": 4.41,
+      "total_asset": null
     },
     {
       "date": "2026-09-22",
       "nav": 1.001504,
-      "wan_return": 2.23
+      "wan_return": 2.23,
+      "total_asset": null
     },
     {
       "date": "2026-09-23",
       "nav": 1.001733,
-      "wan_return": 2.29
+      "wan_return": 2.29,
+      "total_asset": null
     },
     {
       "date": "2026-09-24",
       "nav": 1.00182,
-      "wan_return": 0.87
+      "wan_return": 0.87,
+      "total_asset": null
     },
     {
       "date": "2026-09-28",
       "nav": 1.00268,
-      "wan_return": 8.58
+      "wan_return": 8.58,
+      "total_asset": null
     },
     {
       "date": "2026-09-29",
       "nav": 1.002767,
-      "wan_return": 0.87
+      "wan_return": 0.87,
+      "total_asset": null
     },
     {
       "date": "2026-09-30",
       "nav": 1.002861,
-      "wan_return": 0.94
+      "wan_return": 0.94,
+      "total_asset": null
     },
     {
       "date": "2026-10-08",
       "nav": 1.003557,
-      "wan_return": 6.94
+      "wan_return": 6.94,
+      "total_asset": null
     },
     {
       "date": "2026-10-09",
       "nav": 1.003644,
-      "wan_return": 0.87
+      "wan_return": 0.87,
+      "total_asset": null
     },
     {
       "date": "2026-10-12",
       "nav": 1.003848,
-      "wan_return": 2.03
+      "wan_return": 2.03,
+      "total_asset": null
     },
     {
       "date": "2026-10-13",
       "nav": 1.004475,
-      "wan_return": 6.25
+      "wan_return": 6.25,
+      "total_asset": null
     },
     {
       "date": "2026-10-14",
       "nav": 1.004575,
-      "wan_return": 1.0
+      "wan_return": 1.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-15",
       "nav": 1.00475,
-      "wan_return": 1.74
+      "wan_return": 1.74,
+      "total_asset": null
     },
     {
       "date": "2026-10-16",
       "nav": 1.004838,
-      "wan_return": 0.88
+      "wan_return": 0.88,
+      "total_asset": null
     },
     {
       "date": "2026-10-19",
       "nav": 1.005425,
-      "wan_return": 5.84
+      "wan_return": 5.84,
+      "total_asset": null
     },
     {
       "date": "2026-10-20",
       "nav": 1.005556,
-      "wan_return": 1.3
+      "wan_return": 1.3,
+      "total_asset": null
     },
     {
       "date": "2026-10-21",
       "nav": 1.00599,
-      "wan_return": 4.32
+      "wan_return": 4.32,
+      "total_asset": null
     },
     {
       "date": "2026-10-22",
       "nav": 1.006088,
-      "wan_return": 0.97
+      "wan_return": 0.97,
+      "total_asset": null
     },
     {
       "date": "2026-10-23",
       "nav": 1.006185,
-      "wan_return": 0.96
+      "wan_return": 0.96,
+      "total_asset": null
     },
     {
       "date": "2026-10-26",
       "nav": 1.006562,
-      "wan_return": 3.75
+      "wan_return": 3.75,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.006643,
-      "wan_return": 0.8
+      "wan_return": 0.8,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.006702,
-      "wan_return": 0.59
+      "wan_return": 0.59,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.006723,
-      "wan_return": 0.21
+      "wan_return": 0.21,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.006717,
-      "wan_return": -0.06
+      "wan_return": -0.06,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.006822,
-      "wan_return": 1.04
+      "wan_return": 1.04,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.006893,
-      "wan_return": 0.71
+      "wan_return": 0.71,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.00697,
-      "wan_return": 0.76
+      "wan_return": 0.76,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.007171,
-      "wan_return": 2.0
+      "wan_return": 2.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.007241,
-      "wan_return": 0.7
+      "wan_return": 0.7,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.00738,
-      "wan_return": 1.38
+      "wan_return": 1.38,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.007407,
-      "wan_return": 0.27
+      "wan_return": 0.27,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.007347,
-      "wan_return": -0.6
+      "wan_return": -0.6,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.007253,
-      "wan_return": -0.93
+      "wan_return": -0.93,
+      "total_asset": null
     }
   ],
   "YJ01251204A": [
     {
       "date": "2026-10-26",
       "nav": 1.015398,
-      "wan_return": 1.54
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.015448,
-      "wan_return": 0.49
+      "wan_return": 0.49,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.015553,
-      "wan_return": 1.03
+      "wan_return": 1.03,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.015555,
-      "wan_return": 0.02
+      "wan_return": 0.02,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.015061,
-      "wan_return": -4.86
+      "wan_return": -4.86,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.013892,
-      "wan_return": -11.52
+      "wan_return": -11.52,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.014693,
-      "wan_return": 7.9
+      "wan_return": 7.9,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.014962,
-      "wan_return": 2.65
+      "wan_return": 2.65,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.015211,
-      "wan_return": 2.45
+      "wan_return": 2.45,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.015336,
-      "wan_return": 1.23
+      "wan_return": 1.23,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.015569,
-      "wan_return": 2.29
+      "wan_return": 2.29,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.015574,
-      "wan_return": 0.05
+      "wan_return": 0.05,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.015391,
-      "wan_return": -1.8
+      "wan_return": -1.8,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.015468,
-      "wan_return": 0.76
+      "wan_return": 0.76,
+      "total_asset": null
     }
   ],
   "TG01241351B": [
     {
       "date": "2026-09-16",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-17",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-18",
       "nav": 1.000179,
-      "wan_return": 1.79
+      "wan_return": 1.79,
+      "total_asset": null
     },
     {
       "date": "2026-09-21",
       "nav": 1.000345,
-      "wan_return": 1.66
+      "wan_return": 1.66,
+      "total_asset": null
     },
     {
       "date": "2026-09-22",
       "nav": 1.000467,
-      "wan_return": 1.22
+      "wan_return": 1.22,
+      "total_asset": null
     },
     {
       "date": "2026-09-23",
       "nav": 1.000578,
-      "wan_return": 1.11
+      "wan_return": 1.11,
+      "total_asset": null
     },
     {
       "date": "2026-09-24",
       "nav": 1.000709,
-      "wan_return": 1.31
+      "wan_return": 1.31,
+      "total_asset": null
     },
     {
       "date": "2026-09-28",
       "nav": 1.001099,
-      "wan_return": 3.9
+      "wan_return": 3.9,
+      "total_asset": null
     },
     {
       "date": "2026-09-29",
       "nav": 1.001191,
-      "wan_return": 0.92
+      "wan_return": 0.92,
+      "total_asset": null
     },
     {
       "date": "2026-09-30",
       "nav": 1.001339,
-      "wan_return": 1.48
+      "wan_return": 1.48,
+      "total_asset": null
     },
     {
       "date": "2026-10-08",
       "nav": 1.001939,
-      "wan_return": 5.99
+      "wan_return": 5.99,
+      "total_asset": null
     },
     {
       "date": "2026-10-09",
       "nav": 1.002034,
-      "wan_return": 0.95
+      "wan_return": 0.95,
+      "total_asset": null
     },
     {
       "date": "2026-10-12",
       "nav": 1.002272,
-      "wan_return": 2.38
+      "wan_return": 2.38,
+      "total_asset": null
     },
     {
       "date": "2026-10-13",
       "nav": 1.00235,
-      "wan_return": 0.78
+      "wan_return": 0.78,
+      "total_asset": null
     },
     {
       "date": "2026-10-14",
       "nav": 1.002435,
-      "wan_return": 0.85
+      "wan_return": 0.85,
+      "total_asset": null
     },
     {
       "date": "2026-10-15",
       "nav": 1.002518,
-      "wan_return": 0.83
+      "wan_return": 0.83,
+      "total_asset": null
     },
     {
       "date": "2026-10-16",
       "nav": 1.002591,
-      "wan_return": 0.73
+      "wan_return": 0.73,
+      "total_asset": null
     },
     {
       "date": "2026-10-19",
       "nav": 1.002783,
-      "wan_return": 1.92
+      "wan_return": 1.92,
+      "total_asset": null
     },
     {
       "date": "2026-10-20",
       "nav": 1.002981,
-      "wan_return": 1.97
+      "wan_return": 1.97,
+      "total_asset": null
     },
     {
       "date": "2026-10-21",
       "nav": 1.003151,
-      "wan_return": 1.69
+      "wan_return": 1.69,
+      "total_asset": null
     },
     {
       "date": "2026-10-22",
       "nav": 1.003243,
-      "wan_return": 0.92
+      "wan_return": 0.92,
+      "total_asset": null
     },
     {
       "date": "2026-10-23",
       "nav": 1.003319,
-      "wan_return": 0.76
+      "wan_return": 0.76,
+      "total_asset": null
     },
     {
       "date": "2026-10-26",
       "nav": 1.00349,
-      "wan_return": 1.7
+      "wan_return": 1.7,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.003605,
-      "wan_return": 1.15
+      "wan_return": 1.15,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.003683,
-      "wan_return": 0.78
+      "wan_return": 0.78,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.003608,
-      "wan_return": -0.75
+      "wan_return": -0.75,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.002389,
-      "wan_return": -12.15
+      "wan_return": -12.15,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.001284,
-      "wan_return": -11.02
+      "wan_return": -11.02,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.001772,
-      "wan_return": 4.87
+      "wan_return": 4.87,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.002146,
-      "wan_return": 3.73
+      "wan_return": 3.73,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.002342,
-      "wan_return": 1.96
+      "wan_return": 1.96,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.002503,
-      "wan_return": 1.61
+      "wan_return": 1.61,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.002674,
-      "wan_return": 1.71
+      "wan_return": 1.71,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.002588,
-      "wan_return": -0.86
+      "wan_return": -0.86,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.002112,
-      "wan_return": -4.75
+      "wan_return": -4.75,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.00155,
-      "wan_return": -5.61
+      "wan_return": -5.61,
+      "total_asset": null
     }
   ],
   "YJ01260954A": [
     {
       "date": "2026-10-28",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.00044,
-      "wan_return": 4.4
+      "wan_return": 4.4,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 0.999914,
-      "wan_return": -5.26
+      "wan_return": -5.26,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.000023,
-      "wan_return": 1.09
+      "wan_return": 1.09,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.001226,
-      "wan_return": 12.03
+      "wan_return": 12.03,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.001295,
-      "wan_return": 0.69
+      "wan_return": 0.69,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.001363,
-      "wan_return": 0.68
+      "wan_return": 0.68,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.001431,
-      "wan_return": 0.68
+      "wan_return": 0.68,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.001635,
-      "wan_return": 2.04
+      "wan_return": 2.04,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.001703,
-      "wan_return": 0.68
+      "wan_return": 0.68,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.001771,
-      "wan_return": 0.68
+      "wan_return": 0.68,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.001839,
-      "wan_return": 0.68
+      "wan_return": 0.68,
+      "total_asset": null
     }
   ],
   "YJ01260607A": [
@@ -855,418 +982,500 @@
     {
       "date": "2026-10-15",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-16",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-19",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-20",
       "nav": 1.0007,
-      "wan_return": 7.0
+      "wan_return": 7.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-21",
       "nav": 1.0007,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-22",
       "nav": 1.0008,
-      "wan_return": 1.0
+      "wan_return": 1.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-23",
       "nav": 1.0009,
-      "wan_return": 1.0
+      "wan_return": 1.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-26",
       "nav": 1.0012,
-      "wan_return": 3.0
+      "wan_return": 3.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.0022,
-      "wan_return": 9.99
+      "wan_return": 9.99,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.0022,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.0028,
-      "wan_return": 5.99
+      "wan_return": 5.99,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.0028,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.0039,
-      "wan_return": 10.97
+      "wan_return": 10.97,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.0045,
-      "wan_return": 5.98
+      "wan_return": 5.98,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.0047,
-      "wan_return": 1.99
+      "wan_return": 1.99,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.0049,
-      "wan_return": 1.99
+      "wan_return": 1.99,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.0051,
-      "wan_return": 1.99
+      "wan_return": 1.99,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.0051,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.0051,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.0052,
-      "wan_return": 0.99
+      "wan_return": 0.99,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.0052,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     }
   ],
   "YJ01260504S": [
     {
       "date": "2026-09-09",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-10",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-09-11",
       "nav": 1.000075,
-      "wan_return": 0.75
+      "wan_return": 0.75,
+      "total_asset": null
     },
     {
       "date": "2026-09-14",
       "nav": 1.000209,
-      "wan_return": 1.34
+      "wan_return": 1.34,
+      "total_asset": null
     },
     {
       "date": "2026-09-15",
       "nav": 1.000275,
-      "wan_return": 0.66
+      "wan_return": 0.66,
+      "total_asset": null
     },
     {
       "date": "2026-09-16",
       "nav": 1.000353,
-      "wan_return": 0.78
+      "wan_return": 0.78,
+      "total_asset": null
     },
     {
       "date": "2026-09-17",
       "nav": 1.000444,
-      "wan_return": 0.91
+      "wan_return": 0.91,
+      "total_asset": null
     },
     {
       "date": "2026-09-18",
       "nav": 1.000517,
-      "wan_return": 0.73
+      "wan_return": 0.73,
+      "total_asset": null
     },
     {
       "date": "2026-09-21",
       "nav": 1.000707,
-      "wan_return": 1.9
+      "wan_return": 1.9,
+      "total_asset": null
     },
     {
       "date": "2026-09-22",
       "nav": 1.000785,
-      "wan_return": 0.78
+      "wan_return": 0.78,
+      "total_asset": null
     },
     {
       "date": "2026-09-23",
       "nav": 1.000854,
-      "wan_return": 0.69
+      "wan_return": 0.69,
+      "total_asset": null
     },
     {
       "date": "2026-09-24",
       "nav": 1.000926,
-      "wan_return": 0.72
+      "wan_return": 0.72,
+      "total_asset": null
     },
     {
       "date": "2026-09-28",
       "nav": 1.001177,
-      "wan_return": 2.51
+      "wan_return": 2.51,
+      "total_asset": null
     },
     {
       "date": "2026-09-29",
       "nav": 1.001252,
-      "wan_return": 0.75
+      "wan_return": 0.75,
+      "total_asset": null
     },
     {
       "date": "2026-09-30",
       "nav": 1.001346,
-      "wan_return": 0.94
+      "wan_return": 0.94,
+      "total_asset": null
     },
     {
       "date": "2026-10-08",
       "nav": 1.001801,
-      "wan_return": 4.54
+      "wan_return": 4.54,
+      "total_asset": null
     },
     {
       "date": "2026-10-09",
       "nav": 1.00187,
-      "wan_return": 0.69
+      "wan_return": 0.69,
+      "total_asset": null
     },
     {
       "date": "2026-10-12",
       "nav": 1.002067,
-      "wan_return": 1.97
+      "wan_return": 1.97,
+      "total_asset": null
     },
     {
       "date": "2026-10-13",
       "nav": 1.002193,
-      "wan_return": 1.26
+      "wan_return": 1.26,
+      "total_asset": null
     },
     {
       "date": "2026-10-14",
       "nav": 1.002285,
-      "wan_return": 0.92
+      "wan_return": 0.92,
+      "total_asset": null
     },
     {
       "date": "2026-10-15",
       "nav": 1.002401,
-      "wan_return": 1.16
+      "wan_return": 1.16,
+      "total_asset": null
     },
     {
       "date": "2026-10-16",
       "nav": 1.00245,
-      "wan_return": 0.49
+      "wan_return": 0.49,
+      "total_asset": null
     },
     {
       "date": "2026-10-19",
       "nav": 1.002638,
-      "wan_return": 1.88
+      "wan_return": 1.88,
+      "total_asset": null
     },
     {
       "date": "2026-10-20",
       "nav": 1.002782,
-      "wan_return": 1.44
+      "wan_return": 1.44,
+      "total_asset": null
     },
     {
       "date": "2026-10-21",
       "nav": 1.002955,
-      "wan_return": 1.73
+      "wan_return": 1.73,
+      "total_asset": null
     },
     {
       "date": "2026-10-22",
       "nav": 1.002999,
-      "wan_return": 0.44
+      "wan_return": 0.44,
+      "total_asset": null
     },
     {
       "date": "2026-10-23",
       "nav": 1.003039,
-      "wan_return": 0.4
+      "wan_return": 0.4,
+      "total_asset": null
     },
     {
       "date": "2026-10-26",
       "nav": 1.003195,
-      "wan_return": 1.56
+      "wan_return": 1.56,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.003272,
-      "wan_return": 0.77
+      "wan_return": 0.77,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.003359,
-      "wan_return": 0.87
+      "wan_return": 0.87,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.003369,
-      "wan_return": 0.1
+      "wan_return": 0.1,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.002981,
-      "wan_return": -3.87
+      "wan_return": -3.87,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.001967,
-      "wan_return": -10.11
+      "wan_return": -10.11,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.002059,
-      "wan_return": 0.92
+      "wan_return": 0.92,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.002386,
-      "wan_return": 3.26
+      "wan_return": 3.26,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.002607,
-      "wan_return": 2.2
+      "wan_return": 2.2,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.002716,
-      "wan_return": 1.09
+      "wan_return": 1.09,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.002932,
-      "wan_return": 2.15
+      "wan_return": 2.15,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.002932,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.002719,
-      "wan_return": -2.12
+      "wan_return": -2.12,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.00247,
-      "wan_return": -2.48
+      "wan_return": -2.48,
+      "total_asset": null
     }
   ],
   "YJ01260819A": [
     {
       "date": "2026-10-26",
       "nav": 1.00481,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-10-27",
       "nav": 1.00494,
-      "wan_return": 1.29
+      "wan_return": 1.29,
+      "total_asset": null
     },
     {
       "date": "2026-10-28",
       "nav": 1.00514,
-      "wan_return": 1.99
+      "wan_return": 1.99,
+      "total_asset": null
     },
     {
       "date": "2026-10-29",
       "nav": 1.005298,
-      "wan_return": 1.57
+      "wan_return": 1.57,
+      "total_asset": null
     },
     {
       "date": "2026-10-30",
       "nav": 1.005334,
-      "wan_return": 0.36
+      "wan_return": 0.36,
+      "total_asset": null
     },
     {
       "date": "2026-11-02",
       "nav": 1.005407,
-      "wan_return": 0.73
+      "wan_return": 0.73,
+      "total_asset": null
     },
     {
       "date": "2026-11-03",
       "nav": 1.005509,
-      "wan_return": 1.01
+      "wan_return": 1.01,
+      "total_asset": null
     },
     {
       "date": "2026-11-04",
       "nav": 1.005628,
-      "wan_return": 1.18
+      "wan_return": 1.18,
+      "total_asset": null
     },
     {
       "date": "2026-11-05",
       "nav": 1.005951,
-      "wan_return": 3.21
+      "wan_return": 3.21,
+      "total_asset": null
     },
     {
       "date": "2026-11-06",
       "nav": 1.006022,
-      "wan_return": 0.71
+      "wan_return": 0.71,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.006167,
-      "wan_return": 1.44
+      "wan_return": 1.44,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.006183,
-      "wan_return": 0.16
+      "wan_return": 0.16,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.006102,
-      "wan_return": -0.81
+      "wan_return": -0.81,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.006017,
-      "wan_return": -0.84
+      "wan_return": -0.84,
+      "total_asset": null
     }
   ],
   "YJ01260609A": [
     {
       "date": "2026-11-07",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-08",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-09",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-10",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-11",
       "nav": 1.0,
-      "wan_return": 0.0
+      "wan_return": 0.0,
+      "total_asset": null
     },
     {
       "date": "2026-11-12",
       "nav": 1.000038,
-      "wan_return": 0.38
+      "wan_return": 0.38,
+      "total_asset": null
     }
   ]
 }
