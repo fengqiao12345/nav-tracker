@@ -1,47 +1,56 @@
 import requests
-import re
 import json
 from datetime import date
+from bs4 import BeautifulSoup
 
 # -------------------------- 配置区 --------------------------
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept-Language": "zh-CN,zh;q=0.9"
 }
 TODAY = date.today().strftime("%Y-%m-%d")
 # -----------------------------------------------------------
 
 def get_total_asset(prod_code):
-    """从北银理财净值公告页面抓取最新资产净值，返回xx亿，失败返回-"""
     url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={prod_code}"
     try:
         resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
-        # 匹配表格里最新一行资产净值
-        pattern = re.compile(r'<td>([\d\.]+)</td>\s*</tr>', re.S)
-        all_money = pattern.findall(resp.text)
-        if all_money:
-            asset_yuan = float(all_money[-1])
+        soup = BeautifulSoup(resp.text, "html.parser")
+        rows = soup.select("table tr")
+        if len(rows) < 2:
+            return "-"
+        latest_row = rows[1]
+        tds = latest_row.select("td")
+        if len(tds) >= 8:
+            asset_yuan = float(tds[7].get_text(strip=True))
             asset_yi = round(asset_yuan / 100000000, 2)
             return f"{asset_yi}亿"
         return "-"
-    except Exception:
+    except Exception as e:
+        print(f"【资产净值抓取失败 {prod_code}】{e}")
         return "-"
 
 def fetch_product_info(prod_code):
-    """抓取单位净值、累计净值"""
     url = f"https://www.beijingbobwealth.com.cn/xxpl/cpgg/jzgg/index.html?PROD_CODE={prod_code}"
     try:
         resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
-        # 匹配单位净值、累计净值最新一条
-        unit_pat = re.compile(r'<td>([\d\.]+)</td>\s*<td>([\d\.]+)</td>', re.S)
-        match = unit_pat.search(resp.text)
-        if match:
-            unit_nav = float(match.group(1))
-            acc_nav = float(match.group(2))
+        soup = BeautifulSoup(resp.text, "html.parser")
+        rows = soup.select("table tr")
+        if len(rows) < 2:
+            print(f"【{prod_code}】页面表格为空")
+            return None, None
+        latest_row = rows[1]
+        tds = latest_row.select("td")
+        if len(tds) >= 4:
+            unit_nav = float(tds[2].get_text(strip=True))
+            acc_nav = float(tds[3].get_text(strip=True))
             return unit_nav, acc_nav
+        print(f"【{prod_code}】表格列数不足")
         return None, None
-    except Exception:
+    except Exception as e:
+        print(f"【净值抓取失败 {prod_code}】{e}")
         return None, None
 
 def load_products():
@@ -78,7 +87,7 @@ body{background:#f5f7fa;padding:20px}
 .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px #00000010}
 .card-title{font-size:18px;font-weight:bold;margin-bottom:6px}
 .card-sub{color:#666;margin-bottom:16px;font-size:14px}
-.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .item{padding:12px;background:#f5f7fa;border-radius:8px;text-align:center}
 .item .val{font-size:22px;font-weight:bold;margin:4px 0}
 .up{color:#d63031}
@@ -98,7 +107,6 @@ body{background:#f5f7fa;padding:20px}
 </div>
 """
     for p in product_list:
-        # 增加容错：没有code就跳过这条产品
         if "code" not in p or "name" not in p:
             continue
         name = p["name"]
@@ -109,7 +117,6 @@ body{background:#f5f7fa;padding:20px}
             html += f'<div class="card"><div class="card-title">{name}</div><div class="card-sub">份额代码：{code}</div><div>抓取失败</div></div>'
             continue
 
-        # 历史数据，计算当日万份收益（简化逻辑，和你原有逻辑对齐）
         prod_key = f"{code}"
         if prod_key not in history:
             history[prod_key] = {}
@@ -124,7 +131,6 @@ body{background:#f5f7fa;padding:20px}
             diff = round((unit_nav - prev_nav)*10000,2)
         diff_class = "up" if diff>0 else "down" if diff<0 else ""
 
-        # 7日、14日日均万份收益
         recent7 = sorted_dates[-7:] if len(sorted_dates)>=7 else sorted_dates
         recent14 = sorted_dates[-14:] if len(sorted_dates)>=14 else sorted_dates
         def avg_tenk(arr):
