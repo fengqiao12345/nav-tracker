@@ -260,83 +260,80 @@ def prepare_session():
         )
 
 # ==========================================
-# 获取净值（支持YJ01251204A从北银理财拉总资产，缓存上一期总资产）
+# 获取净值：所有产品优先尝试北银理财接口拉总资产，失败降级老接口
 # ==========================================
 def get_nav_records(share_code):
     """
     获取指定产品最近30个净值点。
-    诚享7天29号A：YJ01251204A，北银理财接口KEY用YJ01251204
-    新增逻辑：当天TOTAL_NAV为空时，复用最近一条有效的总资产
+    全部产品优先走北银理财navindex接口拿TOTAL_NAV总资产
+    当天TOTAL_NAV为空时，复用最近一条有效的总资产
+    北银理财无数据/报错 → 降级北京银行老接口（无总资产）
     """
-    # 去掉末尾A，用来匹配北银理财接口
     bare_code = share_code.rstrip("A")
-    if bare_code == "YJ01251204":
-        new_api_url = (
-            "https://www.beijingbobwealth.com.cn"
-            "/bylc-api/product/navindex"
-        )
-        new_params = {
-            "pageSize": 30,
-            "pageNumber": 1,
-            "KEY": bare_code,
-        }
-        new_headers = {
-            "Accept": "application/json,text/javascript,*/*;q=0.01",
-            "Referer": "https://www.beijingbobwealth.com.cn/",
-            "X-Requested-With": "XMLHttpRequest",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-        }
-        # 增加2次重试
-        retry = 2
-        last_valid_total_asset = None
-        for attempt in range(retry):
-            try:
-                print(f"【{share_code}】尝试调用北银理财总资产接口 KEY={bare_code}，第{attempt+1}次")
-                new_response = SESSION.get(
-                    new_api_url,
-                    params=new_params,
-                    headers=new_headers,
-                    timeout=40,
-                    verify=False
-                )
-                new_response.raise_for_status()
-                new_result = new_response.json()
-                new_rows = new_result.get("data", {}).get("list", [])
-                new_records = []
-                for row in new_rows:
-                    nav_date = str(row.get("NAV_DATE", "")).strip()
-                    nav_value = row.get("NAV")
-                    if not re.fullmatch(r"\d{8}", nav_date):
-                        continue
-                    try:
-                        nav_number = float(nav_value)
-                    except (TypeError, ValueError):
-                        continue
-                    if nav_number <= 0:
-                        continue
-                    # 读取总资产，为空就沿用缓存的有效值
-                    total_nav_str = str(row.get("TOTAL_NAV", "")).strip()
-                    try:
-                        total_nav = float(total_nav_str)
-                        last_valid_total_asset = total_nav
-                    except:
-                        total_nav = last_valid_total_asset
-                    new_records.append({
-                        "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
-                        "nav": nav_number,
-                        "total_asset": total_nav,
-                    })
-                new_records = sorted(new_records, key=lambda item: item["date"])
-                if new_records:
-                    latest = new_records[-1]
-                    print(f"{share_code}：✅北银理财官网净值 {latest['date']} {latest['nav']} 总资产={latest.get('total_asset')}")
-                    return new_records
-                print(f"{share_code}：❌北银理财官网未返回有效净值，改用北京银行原接口")
-            except Exception as error:
-                print(f"{share_code}：❌第{attempt+1}次访问北银理财失败：{type(error).__name__}: {error}")
-                time.sleep(3)
+    new_api_url = (
+        "https://www.beijingbobwealth.com.cn"
+        "/bylc-api/product/navindex"
+    )
+    new_params = {
+        "pageSize": 30,
+        "pageNumber": 1,
+        "KEY": bare_code,
+    }
+    new_headers = {
+        "Accept": "application/json,text/javascript,*/*;q=0.01",
+        "Referer": "https://www.beijingbobwealth.com.cn/",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+    }
+    retry = 2
+    last_valid_total_asset = None
+    for attempt in range(retry):
+        try:
+            print(f"【{share_code}】尝试调用北银理财总资产接口 KEY={bare_code}，第{attempt+1}次")
+            new_response = SESSION.get(
+                new_api_url,
+                params=new_params,
+                headers=new_headers,
+                timeout=40,
+                verify=False
+            )
+            new_response.raise_for_status()
+            new_result = new_response.json()
+            new_rows = new_result.get("data", {}).get("list", [])
+            new_records = []
+            for row in new_rows:
+                nav_date = str(row.get("NAV_DATE", "")).strip()
+                nav_value = row.get("NAV")
+                if not re.fullmatch(r"\d{8}", nav_date):
+                    continue
+                try:
+                    nav_number = float(nav_value)
+                except (TypeError, ValueError):
+                    continue
+                if nav_number <= 0:
+                    continue
+                total_nav_str = str(row.get("TOTAL_NAV", "")).strip()
+                try:
+                    total_nav = float(total_nav_str)
+                    last_valid_total_asset = total_nav
+                except:
+                    total_nav = last_valid_total_asset
+                new_records.append({
+                    "date": f"{nav_date[0:4]}-{nav_date[4:6]}-{nav_date[6:8]}",
+                    "nav": nav_number,
+                    "total_asset": total_nav,
+                })
+            new_records = sorted(new_records, key=lambda item: item["date"])
+            if new_records:
+                latest = new_records[-1]
+                print(f"{share_code}：✅北银理财官网净值 {latest['date']} {latest['nav']} 总资产={latest.get('total_asset')}")
+                return new_records
+            print(f"{share_code}：❌北银理财官网未返回有效净值，改用北京银行原接口")
+        except Exception as error:
+            print(f"{share_code}：❌第{attempt+1}次访问北银理财失败：{type(error).__name__}: {error}")
+            time.sleep(3)
     # 降级到老接口（北京银行）
     payload = {
         "pageNum": 1,
