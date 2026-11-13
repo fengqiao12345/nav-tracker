@@ -1,0 +1,65 @@
+[
+  {
+    "name": "天天金56号A",
+    "share_code": "YJ01260608A",
+    "registration_code": "Z7008926000364",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "诚享30天17A",
+    "share_code": "YJ01260445A",
+    "registration_code": "Z7008926000270",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "诚享100天1号B",
+    "share_code": "TG01241351B",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "智远50天1号A",
+    "share_code": "YJ01260954A",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "春系列天天金57号A类份额",
+    "share_code": "YJ01260609A",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "添利5天1号",
+    "share_code": "XFTLCY5D01A",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "诚享14天12号S",
+    "share_code": "YJ01260504S",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "诚享7天33号A",
+    "share_code": "YJ01260819A",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  },
+  {
+    "name": "诚享7天29号A",
+    "share_code": "YJ01251204A",
+    "registration_code": "",
+    "manager": "北银理财",
+    "enabled": true
+  }
+]

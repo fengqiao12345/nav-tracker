@@ -1,0 +1,1975 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta
+    name="theme-color"
+    content="#17365d"
+  >
+
+  <title>哪吒攒钱｜北银理财新品</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f7fb;
+      color: #1f2937;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .header {
+      padding: 21px 18px;
+      color: white;
+      background:
+        linear-gradient(
+          135deg,
+          #17365d,
+          #2f75b5
+        );
+      border-radius: 18px;
+      box-shadow:
+        0 8px 22px
+        rgba(23,54,93,0.18);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .sub {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .nav a {
+      padding: 11px;
+      border-radius: 11px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav .home {
+      background: white;
+      color: #17365d;
+      border: 1px solid #dce4ef;
+    }
+
+    .nav .current {
+      background: #17365d;
+      color: white;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .card {
+      padding: 17px;
+      background: white;
+      border: 1px solid #eef1f5;
+      border-radius: 16px;
+      box-shadow:
+        0 3px 12px
+        rgba(15,23,42,0.06);
+    }
+
+    .new-tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #fff1f1;
+      color: #c62828;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 0 0 5px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .code {
+      color: #6b7280;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .info-item {
+      padding: 10px;
+      background: #f7f9fc;
+      border-radius: 11px;
+    }
+
+    .info-item span {
+      display: block;
+      margin-bottom: 5px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .info-item strong {
+      font-size: 14px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .fundraising {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .announcement-link {
+      color: #17365d;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .empty {
+      padding: 42px 20px;
+      background: white;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid #eef1f5;
+    }
+
+    .empty-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: #e8f7ec;
+      color: #16803c;
+      font-size: 25px;
+      line-height: 44px;
+      font-weight: 700;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .empty-text {
+      margin-top: 8px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .notice {
+      margin-top: 15px;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .image-actions {
+      margin-top: 15px;
+    }
+
+    .image-actions button {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      background: #17365d;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .image-actions button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .image-result {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .image-result.show {
+      display: block;
+    }
+
+    .image-result img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      -webkit-touch-callout: default;
+      user-select: auto;
+    }
+
+    .save-tip {
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff7df;
+      color: #7a4b00;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (
+      max-width: 480px
+    ) {
+      .card-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+  </script>
+</head>
+
+<body>
+  <main>
+    <div id="capture-area">
+      <section class="header">
+        <h1>北银理财新品</h1>
+
+        <div class="sub">
+          最近更新：2026-11-13 21:15:17（北京时间）
+        </div>
+      </section>
+
+      <nav class="nav">
+        <a
+          class="home"
+          href="index.html">
+          净值追踪
+        </a>
+
+<a
+  class="current"
+  href="new_products.html">
+  新品监测
+</a>
+
+      </nav>
+
+      <section class="list">
+        
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号新客类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGBE7EECE904FC
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号新客类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号Z类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG0FFEA7E2984F
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号Z类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号X类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGC3D5F41107BE
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号X类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号S类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG5D71C89AF5E3
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号S类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号M类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG0BFFCC8EEFF2
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号M类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号J类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG6763A0620C7C
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号J类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式342号A类份额理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGD9DB48371037
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式342号A类份额理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财北银理财京华远见春系列卓远固收封闭式342P理财产品发行公告_2026-11-06
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG1770A016626E
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-06
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            1,414,839,271.14元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财京华远见春系列卓远固收封闭式342P理财产品发行公告_2026-11-06.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式433号新客类份额理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG159F1F370A5A
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式433号新客类份额理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式433号Z类份额理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG1A3424E93DAF
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式433号Z类份额理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式433号X类份额理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGC86E359E4F22
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式433号X类份额理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式433号S类份额理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGDB1B1EE83528
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式433号S类份额理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式433号M类份额理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGF3073C7116EB
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式433号M类份额理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式433号A类份额理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGF4057EA0377A
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式433号A类份额理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财北银理财京华远见春系列卓远固收封闭式433F理财产品发行公告_2026-11-05
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGAE85E3C84CFE
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-05
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            320,071,161.07元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财京华远见春系列卓远固收封闭式433F理财产品发行公告_2026-11-05.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列行远15M封闭式16号（红利）J类份额理财产品发行公告_2026-11-04
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG163ECB387648
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-04
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            293,364,463.95元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列行远15M封闭式16号（红利）J类份额理财产品发行公告_2026-11-04.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列行远15M封闭式16号（红利）A类份额理财产品发行公告_2026-11-04
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGB42782B3D952
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-04
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            293,364,463.95元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列行远15M封闭式16号（红利）A类份额理财产品发行公告_2026-11-04.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财北银理财春系列封闭式101号理财产品理财产品发行公告_2026-11-04
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG9C7A2FA59E94
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-11-04
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            54,936,796.11元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财春系列封闭式101号理财产品理财产品发行公告_2026-11-04.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列诚享90天持有期60号S类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG0123277C6695
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            90天持有期
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            342,006元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享90天持有期60号S类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列诚享30天持有期50号S类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG5D61F138D260
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            30天持有期
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            810,605元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享30天持有期50号S类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列诚享90天持有期60号A类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG3D1EC0277FB2
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            90天持有期
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            342,006元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享90天持有期60号A类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列诚享7天持有期60号A类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG8F7B61D570F7
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            7天持有期
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            467,204元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享7天持有期60号A类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列诚享30天持有期50号A类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GGF0E60CA8E67E
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            30天持有期
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            810,605元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列诚享30天持有期50号A类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式341号Z类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG239CD8695F82
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            2,033,298,638.45元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式341号Z类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式341号T类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG7B6553992541
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            2,033,298,638.45元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式341号T类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财春系列卓远固收封闭式341号A类份额理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG03F0D533CA8F
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            2,033,298,638.45元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财春系列卓远固收封闭式341号A类份额理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+    <article class="card">
+      <div class="new-tag">
+        北银理财新发行
+      </div>
+
+      <h2>
+        北银理财北银理财京华远见春系列卓远固收封闭式341P理财产品发行公告_2026-10-30
+      </h2>
+
+      <div class="code">
+        公告标识：
+        GG2E5DDCA8C872
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span>公告日期</span>
+          <strong>
+            2026-10-30
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>持有期限</span>
+          <strong>
+            封闭式
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>产品类型</span>
+          <strong>
+            人民币理财产品
+          </strong>
+        </div>
+
+        <div class="info-item">
+          <span>公告类型</span>
+          <strong>
+            发行公告
+          </strong>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="fundraising">
+          产品募集规模：
+          <strong>
+            2,033,298,638.45元
+          </strong>
+        </div>
+
+        <a class="announcement-link" href="https://www.beijingbobwealth.com.cn/upload/pdf/北银理财北银理财京华远见春系列卓远固收封闭式341P理财产品发行公告_2026-10-30.pdf" target="_blank" rel="noopener noreferrer">查看发行公告</a>
+      </div>
+    </article>
+    
+      </section>
+
+      <div class="notice">
+        说明：本页面所称“新品”，是指程序首次监测到
+        该产品出现在北银理财官网发行公告中。
+        公告发布不等于产品当日正式成立，
+        也不代表已在全部销售渠道上架。
+        具体信息以北银理财正式公告及销售文件为准。
+      </div>
+    </div>
+
+    <div class="image-actions">
+      <button
+        type="button"
+        id="make-image">
+        生成新品长图
+      </button>
+    </div>
+
+    <div
+      id="image-result"
+      class="image-result">
+    </div>
+  </main>
+
+  <script>
+    document
+      .getElementById("make-image")
+      .addEventListener(
+        "click",
+        makeLongImage
+      );
+
+    async function makeLongImage() {
+      const button =
+        document.getElementById(
+          "make-image"
+        );
+
+      const result =
+        document.getElementById(
+          "image-result"
+        );
+
+      if (
+        typeof html2canvas
+        !== "function"
+      ) {
+        result.classList.add(
+          "show"
+        );
+
+        result.innerHTML =
+          '<div class="save-tip">'
+          + '长图组件加载失败，请刷新页面后重试。'
+          + '</div>';
+
+        return;
+      }
+
+      button.disabled = true;
+
+      button.textContent =
+        "正在生成长图…";
+
+      result.classList.remove(
+        "show"
+      );
+
+      result.innerHTML = "";
+
+      try {
+        const target =
+          document.getElementById(
+            "capture-area"
+          );
+
+        const canvas =
+          await html2canvas(
+            target,
+            {
+              backgroundColor:
+                "#f5f7fb",
+              scale: 2,
+              useCORS: true,
+              logging: false
+            }
+          );
+
+        const image =
+          document.createElement(
+            "img"
+          );
+
+        image.src =
+          canvas.toDataURL(
+            "image/png"
+          );
+
+        image.alt =
+          "北银理财新品监测长图";
+
+        const tip =
+          document.createElement(
+            "div"
+          );
+
+        tip.className =
+          "save-tip";
+
+        tip.textContent =
+          "长按下方图片，选择保存图片或保存到照片";
+
+        result.appendChild(
+          tip
+        );
+
+        result.appendChild(
+          image
+        );
+
+        result.classList.add(
+          "show"
+        );
+
+        result.scrollIntoView(
+          {
+            behavior: "smooth",
+            block: "start"
+          }
+        );
+
+        button.textContent =
+          "重新生成新品长图";
+
+      } catch (error) {
+        result.classList.add(
+          "show"
+        );
+
+        result.innerHTML =
+          '<div class="save-tip">'
+          + '长图生成失败，请刷新页面后重试。'
+          + '</div>';
+
+        button.textContent =
+          "重新生成新品长图";
+
+      } finally {
+        button.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
