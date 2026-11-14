@@ -480,7 +480,7 @@ valid_records.append(
 
 unique_records = {}
 
-    for record in valid_records:
+for record in valid_records:
         unique_records[
             record["date"]
         ] = record
