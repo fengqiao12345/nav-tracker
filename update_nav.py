@@ -466,16 +466,22 @@ def get_nav_records(share_code):
         if nav_number <= 0:
             continue
 
-        valid_records.append(
-            {
-                "date": (
-                    f"{nav_date[0:4]}-"
-                    f"{nav_date[4:6]}-"
-                    f"{nav_date[6:8]}"
-                ),
-                "nav": nav_number,
-            }
-        )
+valid_records.append(
+    {
+        "date": (
+            f"{nav_date[0:4]}-"
+            f"{nav_date[4:6]}-"
+            f"{nav_date[6:8]}"
+        ),
+        "nav": nav_number,
+        "asset_size_wan": round(
+            float(
+                record.get("ASSET_VAL", 0)
+            ) / 10000,
+            0,
+        ),
+    }
+)
 
     unique_records = {}
 
@@ -636,10 +642,16 @@ def merge_product_history(
         ):
             continue
 
-        record_map[date_value] = {
-            "date": date_value,
-            "nav": float(nav_value),
-            "wan_return": float(
+record_map[date_value] = {
+    "date": date_value,
+    "nav": float(nav_value),
+    "asset_size_wan": float(
+        record.get(
+            "asset_size_wan",
+            0
+        )
+    ),
+    "wan_return": float(
                 record.get(
                     "wan_return",
                     0,
@@ -661,9 +673,16 @@ def merge_product_history(
 
         if existing is None:
             record_map[date_value] = {
-                "date": date_value,
-                "nav": nav_value,
-                "wan_return": 0.0,
+    "date": date_value,
+    "nav": nav_value,
+    "asset_size_wan": float(
+        record.get(
+            "asset_size_wan",
+            0
+        )
+    ),
+    "wan_return": 0.0,
+}
             }
             changed = True
 
