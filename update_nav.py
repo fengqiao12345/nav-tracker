@@ -474,16 +474,11 @@ valid_records.append(
             f"{nav_date[6:8]}"
         ),
         "nav": nav_number,
-        "asset_size_wan": round(
-            float(
-                record.get("ASSET_VAL", 0)
-            ) / 10000,
-            0,
-        ),
+        "asset_size_wan": float(record.get("ASSET_VAL", 0)) / 10000,
     }
 )
 
-    unique_records = {}
+unique_records = {}
 
     for record in valid_records:
         unique_records[
