@@ -338,6 +338,8 @@ def get_nav_records(share_code):
 
             for row in new_rows:
 
+                print(row)
+                
                 product_code = str(
                     row.get("PROD_CODE", "")
                 ).strip()
