@@ -501,6 +501,96 @@ def get_nav_records(share_code):
     return sorted_records
 
 
+def get_asset_size_wan(share_code):
+    """从北银理财净值明细接口读取最新资产净值，并换算为万元。"""
+
+    url = (
+        "https://www.beijingbobwealth.com.cn"
+        "/bylc-api/product/navlist"
+    )
+
+    params = {
+        "pageSize": 30,
+        "pageNumber": 1,
+        "PROD_CODE": share_code,
+    }
+
+    headers = {
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Referer": (
+            "https://www.beijingbobwealth.com.cn/"
+            "xxpl/cpgg/jzgg/index.html"
+        ),
+        "X-Requested-With": "XMLHttpRequest",
+    }
+
+    try:
+        response = SESSION.get(
+            url,
+            params=params,
+            headers=headers,
+            timeout=30,
+        )
+        response.raise_for_status()
+        result = response.json()
+        rows = result.get("data", {}).get("list", [])
+
+        valid_assets = []
+
+        for row in rows:
+            product_code = str(
+                row.get("PROD_CODE", "")
+            ).strip()
+            nav_date = str(
+                row.get("NAV_DATE", "")
+            ).strip()
+            asset_value = row.get("ASSET_VAL")
+
+            if product_code != share_code:
+                continue
+
+            try:
+                asset_number = float(asset_value)
+            except (TypeError, ValueError):
+                continue
+
+            if asset_number <= 0:
+                continue
+
+            valid_assets.append(
+                {
+                    "date": nav_date,
+                    "asset_size_wan": round(
+                        asset_number / 10000,
+                        2,
+                    ),
+                }
+            )
+
+        if not valid_assets:
+            print(f"{share_code}：未取得产品规模")
+            return None
+
+        valid_assets.sort(
+            key=lambda item: item["date"]
+        )
+        latest = valid_assets[-1]
+
+        print(
+            f"{share_code}：产品规模 "
+            f"{latest['asset_size_wan']:,.2f} 万元"
+        )
+
+        return latest["asset_size_wan"]
+
+    except Exception as error:
+        print(
+            f"{share_code}：产品规模获取失败："
+            f"{type(error).__name__}: {error}"
+        )
+        return None
+
+
 # ==========================================
 # 万收计算
 # ==========================================
@@ -639,6 +729,9 @@ def merge_product_history(
         record_map[date_value] = {
             "date": date_value,
             "nav": float(nav_value),
+            "asset_size_wan": record.get(
+                "asset_size_wan"
+            ),
             "wan_return": float(
                 record.get(
                     "wan_return",
@@ -663,13 +756,30 @@ def merge_product_history(
             record_map[date_value] = {
                 "date": date_value,
                 "nav": nav_value,
+                "asset_size_wan": record.get(
+                    "asset_size_wan"
+                ),
                 "wan_return": 0.0,
             }
             changed = True
 
-        elif existing["nav"] != nav_value:
-            existing["nav"] = nav_value
-            changed = True
+        else:
+            if existing["nav"] != nav_value:
+                existing["nav"] = nav_value
+                changed = True
+
+            asset_size_wan = record.get(
+                "asset_size_wan"
+            )
+            if (
+                asset_size_wan is not None
+                and existing.get("asset_size_wan")
+                != asset_size_wan
+            ):
+                existing["asset_size_wan"] = (
+                    asset_size_wan
+                )
+                changed = True
 
     merged_records = sorted(
         record_map.values(),
@@ -769,6 +879,17 @@ def create_product_card(
 
     latest_record = records[-1]
 
+    asset_size_wan = latest_record.get(
+        "asset_size_wan"
+    )
+
+    if asset_size_wan is None:
+        asset_size_text = "--"
+    else:
+        asset_size_text = (
+            f"{float(asset_size_wan):,.2f} 万"
+        )
+
     wan_return = float(
         latest_record.get(
             "wan_return",
@@ -787,6 +908,13 @@ def create_product_card(
         calculate_daily_average(
             records,
             14,
+        )
+    )
+
+    avg_30d = (
+        calculate_daily_average(
+            records,
+            30,
         )
     )
 
@@ -811,6 +939,13 @@ def create_product_card(
         avg_14d
     )
 
+    (
+        avg_30d_class,
+        avg_30d_text,
+    ) = format_return(
+        avg_30d
+    )
+
     return f"""
     <article class="card">
       <div class="product-name">
@@ -826,11 +961,11 @@ def create_product_card(
 
         <div class="metric">
           <div class="label">
-            单位净值
+            产品规模
           </div>
 
           <div class="value">
-            {float(latest_record["nav"]):.6f}
+            {asset_size_text}
           </div>
         </div>
 
@@ -861,6 +996,16 @@ def create_product_card(
 
           <div class="value {avg_14d_class}">
             {avg_14d_text}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">
+            30日日均万收
+          </div>
+
+          <div class="value {avg_30d_class}">
+            {avg_30d_text}
           </div>
         </div>
 
@@ -1179,7 +1324,8 @@ def render_index(
       不构成投资建议。
       请以产品管理人正式披露为准。
       “当日万收”为相邻净值点每万元变化；
-      “7日/14日日均万收”按自然日计算。
+      “7日/14日/30日日均万收”按自然日计算；
+      “产品规模”按资产净值换算为万元。
     </div>
 
   </main>
@@ -1396,6 +1542,15 @@ def main():
             continue
 
         success_count += 1
+
+        asset_size_wan = get_asset_size_wan(
+            code
+        )
+
+        if asset_size_wan is not None:
+            api_records[-1]["asset_size_wan"] = (
+                asset_size_wan
+            )
 
         changed = (
             merge_product_history(
