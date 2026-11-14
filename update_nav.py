@@ -286,7 +286,7 @@ def get_nav_records(share_code):
         "Referer": PAGE_URL,
     }
 
-    if share_code == "YJ01251204A":
+    if share_code in ("YJ01251204A", "YJ01251202A"):
 
         new_api_url = (
             "https://www.beijingbobwealth.com.cn"

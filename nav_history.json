@@ -1525,5 +1525,13 @@
       "asset_size_wan": 10000.4,
       "wan_return": 0.28
     }
+  ],
+  "YJ01251202A": [
+    {
+      "date": "2026-11-13",
+      "nav": 1.012747,
+      "asset_size_wan": 250376.23,
+      "wan_return": 0.0
+    }
   ]
 }
