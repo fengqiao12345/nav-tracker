@@ -290,13 +290,13 @@ def get_nav_records(share_code):
 
         new_api_url = (
             "https://www.beijingbobwealth.com.cn"
-            "/bylc-api/product/navindex"
+            "/bylc-api/product/navlist"
         )
 
         new_params = {
-            "pageSize": 30,
+            "pageSize": 60,
             "pageNumber": 1,
-            "KEY": share_code,
+            "PROD_CODE": share_code,
         }
 
         new_headers = {
@@ -306,6 +306,7 @@ def get_nav_records(share_code):
             ),
             "Referer": (
                 "https://www.beijingbobwealth.com.cn/"
+                "xxpl/cpgg/jzgg/index.html"
             ),
             "X-Requested-With": "XMLHttpRequest",
             "User-Agent": (
@@ -324,11 +325,8 @@ def get_nav_records(share_code):
                 headers=new_headers,
                 timeout=30,
             )
-
             new_response.raise_for_status()
-
             new_result = new_response.json()
-
             new_rows = (
                 new_result.get("data", {})
                 .get("list", [])
@@ -337,80 +335,82 @@ def get_nav_records(share_code):
             new_records = []
 
             for row in new_rows:
-
-                print(row)
-                
                 product_code = str(
                     row.get("PROD_CODE", "")
                 ).strip()
-
                 nav_date = str(
                     row.get("NAV_DATE", "")
                 ).strip()
-
                 nav_value = row.get("NAV")
+                asset_value = row.get("ASSET_VAL")
 
                 if product_code != share_code:
                     continue
 
-                if not re.fullmatch(
-                    r"\d{8}",
-                    nav_date,
-                ):
+                if not re.fullmatch(r"\d{8}", nav_date):
                     continue
 
                 try:
-                    nav_number = float(
-                        nav_value
-                    )
+                    nav_number = float(nav_value)
                 except (TypeError, ValueError):
                     continue
 
                 if nav_number <= 0:
                     continue
 
-                new_records.append(
-                    {
-                        "date": (
-                            f"{nav_date[0:4]}-"
-                            f"{nav_date[4:6]}-"
-                            f"{nav_date[6:8]}"
-                        ),
-                        "nav": nav_number,
-                    }
-                )
+                item = {
+                    "date": (
+                        f"{nav_date[0:4]}-"
+                        f"{nav_date[4:6]}-"
+                        f"{nav_date[6:8]}"
+                    ),
+                    "nav": nav_number,
+                }
 
+                try:
+                    asset_number = float(asset_value)
+                    if asset_number > 0:
+                        item["asset_size_wan"] = round(
+                            asset_number / 10000,
+                            2,
+                        )
+                except (TypeError, ValueError):
+                    pass
+
+                new_records.append(item)
+
+            unique_records = {
+                item["date"]: item
+                for item in new_records
+            }
             new_records = sorted(
-                new_records,
+                unique_records.values(),
                 key=lambda item: item["date"],
             )
 
             if new_records:
                 latest = new_records[-1]
-
                 print(
-                    f"{share_code}："
-                    f"取得北银理财官网净值 "
-                    f"{latest['date']} "
-                    f"{latest['nav']}"
+                    f"{share_code}：取得北银理财历史净值 "
+                    f"{latest['date']} {latest['nav']}，"
+                    f"共{len(new_records)}条"
                 )
-
                 return new_records
 
             print(
                 f"{share_code}："
-                "北银理财官网未返回有效净值，"
+                "北银理财历史接口未返回有效净值，"
                 "改用北京银行原接口"
             )
 
         except Exception as error:
             print(
                 f"{share_code}："
-                "北银理财官网接口访问失败，"
+                "北银理财历史接口访问失败，"
                 "改用北京银行原接口："
-                f"{type(error).__name__}: "
-                f"{error}"
+                f"{type(error).__name__}: {error}"
             )
+
     response = SESSION.post(
         API_URL,
         json=payload,
@@ -568,7 +568,7 @@ def get_asset_size_wan(share_code):
             )
 
         if not valid_assets:
-            print(f"{share_code}：未取得资产净值")
+            print(f"{share_code}：未取得产品规模")
             return None
 
         valid_assets.sort(
@@ -577,7 +577,7 @@ def get_asset_size_wan(share_code):
         latest = valid_assets[-1]
 
         print(
-            f"{share_code}：资产净值 "
+            f"{share_code}：产品规模 "
             f"{latest['asset_size_wan']:,.2f} 万元"
         )
 
@@ -585,7 +585,7 @@ def get_asset_size_wan(share_code):
 
     except Exception as error:
         print(
-            f"{share_code}：资产净值获取失败："
+            f"{share_code}：产品规模获取失败："
             f"{type(error).__name__}: {error}"
         )
         return None
@@ -961,7 +961,7 @@ def create_product_card(
 
         <div class="metric">
           <div class="label">
-            资产净值
+            产品规模
           </div>
 
           <div class="value">
@@ -1325,7 +1325,7 @@ def render_index(
       请以产品管理人正式披露为准。
       “当日万收”为相邻净值点每万元变化；
       “7日/14日/30日日均万收”按自然日计算；
-      “资产净值”按资产净值换算为万元。
+      “产品规模”按资产净值换算为万元。
     </div>
 
   </main>
@@ -1559,14 +1559,6 @@ def main():
                 api_records,
             )
         )
-
-        if code == "YJ01251204A":
-            api_records = [
-                {
-                    "date": "2026-10-30",
-                    "nav": 1.015061
-                }
-            ]
 
         latest_record = (
             api_records[-1]
