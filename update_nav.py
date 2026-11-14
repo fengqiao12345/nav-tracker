@@ -481,14 +481,14 @@ valid_records.append(
 unique_records = {}
 
 for record in valid_records:
-        unique_records[
-            record["date"]
-        ] = record
+    unique_records[
+        record["date"]
+    ] = record
 
-    sorted_records = sorted(
-        unique_records.values(),
-        key=lambda item: item["date"],
-    )
+sorted_records = sorted(
+    unique_records.values(),
+    key=lambda item: item["date"],
+)
 
     if sorted_records:
         latest = sorted_records[-1]
