@@ -466,40 +466,39 @@ def get_nav_records(share_code):
         if nav_number <= 0:
             continue
 
-valid_records.append(
-    {
-        "date": (
-            f"{nav_date[0:4]}-"
-            f"{nav_date[4:6]}-"
-            f"{nav_date[6:8]}"
-        ),
-        "nav": nav_number,
-        "asset_size_wan": float(record.get("ASSET_VAL", 0)) / 10000,
-    }
-)
+        valid_records.append(
+            {
+                "date": (
+                    f"{nav_date[0:4]}-"
+                    f"{nav_date[4:6]}-"
+                    f"{nav_date[6:8]}"
+                ),
+                "nav": nav_number,
+            }
+        )
 
-unique_records = {}
+    unique_records = {}
 
-for record in valid_records:
-    unique_records[
-        record["date"]
-    ] = record
+    for record in valid_records:
+        unique_records[
+            record["date"]
+        ] = record
 
-sorted_records = sorted(
-    unique_records.values(),
-    key=lambda item: item["date"],
-)
-
-if sorted_records:
-    latest = sorted_records[-1]
-
-    print(
-        f"{share_code}：取得北京银行净值 "
-        f"{latest['date']} "
-        f"{latest['nav']}"
+    sorted_records = sorted(
+        unique_records.values(),
+        key=lambda item: item["date"],
     )
 
-return sorted_records
+    if sorted_records:
+        latest = sorted_records[-1]
+
+        print(
+            f"{share_code}：取得北京银行净值 "
+            f"{latest['date']} "
+            f"{latest['nav']}"
+        )
+
+    return sorted_records
 
 
 # ==========================================
@@ -637,16 +636,10 @@ def merge_product_history(
         ):
             continue
 
-record_map[date_value] = {
-    "date": date_value,
-    "nav": float(nav_value),
-    "asset_size_wan": float(
-        record.get(
-            "asset_size_wan",
-            0
-        )
-    ),
-    "wan_return": float(
+        record_map[date_value] = {
+            "date": date_value,
+            "nav": float(nav_value),
+            "wan_return": float(
                 record.get(
                     "wan_return",
                     0,
@@ -668,16 +661,9 @@ record_map[date_value] = {
 
         if existing is None:
             record_map[date_value] = {
-    "date": date_value,
-    "nav": nav_value,
-    "asset_size_wan": float(
-        record.get(
-            "asset_size_wan",
-            0
-        )
-    ),
-    "wan_return": 0.0,
-}
+                "date": date_value,
+                "nav": nav_value,
+                "wan_return": 0.0,
             }
             changed = True
 
