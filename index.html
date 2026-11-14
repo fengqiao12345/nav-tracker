@@ -169,15 +169,41 @@
       padding: 0 14px 18px;
     }
 
+    .image-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
     .image-actions button {
       width: 100%;
-      padding: 13px;
+      padding: 13px 8px;
       border: 0;
       border-radius: 12px;
       background: #17365d;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
+      cursor: pointer;
+    }
+
+    .image-actions button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .capture-copy {
+      position: absolute;
+      left: -100000px;
+      top: 0;
+      width: 652px;
+      background: #f5f7fb;
+    }
+
+    @media (max-width: 480px) {
+      .image-actions {
+        grid-template-columns: 1fr;
+      }
     }
 
     .image-result {
@@ -246,7 +272,9 @@
 
     <section class="product-list">
       
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="other">
       <div class="product-name">
         天天金56号A
       </div>
@@ -315,7 +343,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="chengxiang">
       <div class="product-name">
         诚享30天17A
       </div>
@@ -384,7 +414,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="chengxiang">
       <div class="product-name">
         诚享100天1号B
       </div>
@@ -453,7 +485,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="other">
       <div class="product-name">
         智远50天1号A
       </div>
@@ -522,7 +556,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="other">
       <div class="product-name">
         春系列天天金57号A类份额
       </div>
@@ -591,7 +627,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="other">
       <div class="product-name">
         添利5天1号
       </div>
@@ -660,7 +698,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="chengxiang">
       <div class="product-name">
         诚享14天12号S
       </div>
@@ -729,7 +769,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="chengxiang">
       <div class="product-name">
         诚享7天33号A
       </div>
@@ -798,7 +840,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="chengxiang">
       <div class="product-name">
         诚享7天29号A
       </div>
@@ -867,7 +911,9 @@
       </div>
     </article>
     
-    <article class="card">
+    <article
+      class="card"
+      data-image-group="chengxiang">
       <div class="product-name">
         诚享7天27号A
       </div>
@@ -954,9 +1000,16 @@
 
     <button
       type="button"
-      id="make-image"
-      onclick="makeLongImage()">
-      生成长图
+      id="make-chengxiang-image"
+      onclick="makeGroupImage('chengxiang')">
+      生成诚享系列图片
+    </button>
+
+    <button
+      type="button"
+      id="make-other-image"
+      onclick="makeGroupImage('other')">
+      生成其他品类图片
     </button>
 
   </div>
@@ -968,99 +1021,124 @@
 
   <script>
 
-    async function makeLongImage() {
+    async function makeGroupImage(groupName) {
+
+      const buttonId =
+        groupName === "chengxiang"
+          ? "make-chengxiang-image"
+          : "make-other-image";
+
+      const groupTitle =
+        groupName === "chengxiang"
+          ? "诚享系列"
+          : "其他品类";
 
       const button =
-        document.getElementById(
-          "make-image"
-        );
+        document.getElementById(buttonId);
 
       const result =
-        document.getElementById(
-          "image-result"
-        );
+        document.getElementById("image-result");
 
-      if (
-        typeof html2canvas
-        !== "function"
-      ) {
-        result.classList.add(
-          "show"
-        );
-
+      if (typeof html2canvas !== "function") {
+        result.classList.add("show");
         result.innerHTML =
           '<div class="save-tip">'
           + '长图组件加载失败，请刷新后重试。'
           + '</div>';
-
         return;
       }
 
+      const source =
+        document.getElementById("capture-area");
+
+      const captureCopy = source.cloneNode(true);
+      captureCopy.removeAttribute("id");
+      captureCopy.classList.add("capture-copy");
+
+      const cards =
+        captureCopy.querySelectorAll(
+          ".card[data-image-group]"
+        );
+
+      let keptCount = 0;
+
+      cards.forEach((card) => {
+        if (
+          card.dataset.imageGroup
+          !== groupName
+        ) {
+          card.remove();
+        } else {
+          keptCount += 1;
+        }
+      });
+
+      if (keptCount === 0) {
+        result.classList.add("show");
+        result.innerHTML =
+          '<div class="save-tip">'
+          + groupTitle
+          + '暂无可生成的产品。'
+          + '</div>';
+        return;
+      }
+
+      const updateTime =
+        captureCopy.querySelector(
+          ".update-time"
+        );
+
+      if (updateTime) {
+        updateTime.innerHTML =
+          groupTitle
+          + ' ｜ 数据日期：2026-11-13';
+      }
+
+      const pageNav =
+        captureCopy.querySelector(
+          ".page-nav"
+        );
+
+      if (pageNav) {
+        pageNav.remove();
+      }
+
+      document.body.appendChild(captureCopy);
+
       button.disabled = true;
-
-      button.textContent =
-        "正在生成长图…";
-
-      result.classList.remove(
-        "show"
-      );
-
+      button.textContent = "正在生成…";
+      result.classList.remove("show");
       result.innerHTML = "";
 
       try {
-
-        const target =
-          document.getElementById(
-            "capture-area"
-          );
-
-        const canvas =
-          await html2canvas(
-            target,
-            {
-              backgroundColor:
-                "#f5f7fb",
-              scale: 2,
-              useCORS: true,
-              logging: false
-            }
-          );
+        const canvas = await html2canvas(
+          captureCopy,
+          {
+            backgroundColor: "#f5f7fb",
+            scale: 2,
+            useCORS: true,
+            logging: false
+          }
+        );
 
         const image =
-          document.createElement(
-            "img"
-          );
+          document.createElement("img");
 
-        image.src =
-          canvas.toDataURL(
-            "image/png"
-          );
-
+        image.src = canvas.toDataURL("image/png");
         image.alt =
-          "哪吒攒钱理财净值长图";
+          "哪吒攒钱" + groupTitle + "净值图片";
 
         const tip =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
-        tip.className =
-          "save-tip";
-
+        tip.className = "save-tip";
         tip.textContent =
-          "长按下方图片，选择保存到照片或保存图片";
+          groupTitle
+          + "图片已生成，长按下方图片保存";
 
-        result.appendChild(
-          tip
-        );
-
-        result.appendChild(
-          image
-        );
-
-        result.classList.add(
-          "show"
-        );
+        result.appendChild(tip);
+        result.appendChild(image);
+        result.classList.add("show");
 
         result.scrollIntoView(
           {
@@ -1069,34 +1147,21 @@
           }
         );
 
-        button.textContent =
-          "重新生成长图";
-
-      }
-
-      catch (error) {
-
-        result.classList.add(
-          "show"
-        );
-
+      } catch (error) {
+        result.classList.add("show");
         result.innerHTML =
           '<div class="save-tip">'
-          + '长图生成失败，请刷新后重试。'
+          + groupTitle
+          + '图片生成失败，请刷新后重试。'
           + '</div>';
-
+      } finally {
+        captureCopy.remove();
+        button.disabled = false;
         button.textContent =
-          "重新生成长图";
-
+          groupName === "chengxiang"
+            ? "重新生成诚享系列图片"
+            : "重新生成其他品类图片";
       }
-
-      finally {
-
-        button.disabled =
-          false;
-
-      }
-
     }
 
   </script>
