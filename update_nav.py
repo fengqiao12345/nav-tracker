@@ -568,7 +568,7 @@ def get_asset_size_wan(share_code):
             )
 
         if not valid_assets:
-            print(f"{share_code}：未取得产品规模")
+            print(f"{share_code}：未取得资产净值")
             return None
 
         valid_assets.sort(
@@ -577,7 +577,7 @@ def get_asset_size_wan(share_code):
         latest = valid_assets[-1]
 
         print(
-            f"{share_code}：产品规模 "
+            f"{share_code}：资产净值 "
             f"{latest['asset_size_wan']:,.2f} 万元"
         )
 
@@ -585,7 +585,7 @@ def get_asset_size_wan(share_code):
 
     except Exception as error:
         print(
-            f"{share_code}：产品规模获取失败："
+            f"{share_code}：资产净值获取失败："
             f"{type(error).__name__}: {error}"
         )
         return None
@@ -961,7 +961,7 @@ def create_product_card(
 
         <div class="metric">
           <div class="label">
-            产品规模
+            资产净值
           </div>
 
           <div class="value">
@@ -1325,7 +1325,7 @@ def render_index(
       请以产品管理人正式披露为准。
       “当日万收”为相邻净值点每万元变化；
       “7日/14日/30日日均万收”按自然日计算；
-      “产品规模”按资产净值换算为万元。
+      “资产净值”按资产净值换算为万元。
     </div>
 
   </main>
