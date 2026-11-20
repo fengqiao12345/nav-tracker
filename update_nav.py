@@ -911,16 +911,16 @@ def create_product_card(
 
             if asset_change > 0:
                 asset_change_text = (
-                    f"较上期 +{asset_change:,.2f} 万"
+                    f"↑ 增加 {asset_change:,.2f} 万"
                 )
                 asset_change_class = "positive"
             elif asset_change < 0:
                 asset_change_text = (
-                    f"较上期 {asset_change:,.2f} 万"
+                    f"↓ 减少 {abs(asset_change):,.2f} 万"
                 )
                 asset_change_class = "negative"
             else:
-                asset_change_text = "较上期 0.00 万"
+                asset_change_text = "→ 无变化"
                 asset_change_class = "neutral"
 
     wan_return = float(
@@ -1008,8 +1008,14 @@ def create_product_card(
           <div class="value">
             {asset_size_text}
           </div>
+        </div>
 
-          <div class="asset-change {asset_change_class}">
+        <div class="metric">
+          <div class="label">
+            规模较上期
+          </div>
+
+          <div class="value asset-change-value {asset_change_class}">
             {asset_change_text}
           </div>
         </div>
@@ -1254,10 +1260,10 @@ def render_index(
       font-weight: 750;
     }}
 
-    .asset-change {{
-      margin-top: 5px;
-      font-size: 12px;
-      font-weight: 700;
+    .asset-change-value {{
+      font-size: 17px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
     }}
 
     .positive {{
