@@ -206,8 +206,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.002579,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 234950.5,
+      "asset_date": "2026-11-19",
       "wan_return": 0.45
     }
   ],
@@ -523,25 +523,18 @@
     {
       "date": "2026-11-19",
       "nav": 1.007199,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 376944.08,
+      "asset_date": "2026-11-19",
       "wan_return": 0.58
     }
   ],
   "YJ01251204A": [
     {
-      "date": "2026-08-19",
-      "nav": 1.009628,
-      "asset_size_wan": 201.93,
-      "asset_date": "2026-08-19",
-      "wan_return": 0.0
-    },
-    {
       "date": "2026-08-20",
       "nav": 1.009704,
       "asset_size_wan": 201.94,
       "asset_date": "2026-08-20",
-      "wan_return": 0.75
+      "wan_return": 0.0
     },
     {
       "date": "2026-08-21",
@@ -948,6 +941,13 @@
       "asset_size_wan": 254313.48,
       "asset_date": "2026-11-18",
       "wan_return": 2.82
+    },
+    {
+      "date": "2026-11-19",
+      "nav": 1.015414,
+      "asset_size_wan": 219991.86,
+      "asset_date": "2026-11-19",
+      "wan_return": 1.69
     }
   ],
   "TG01241351B": [
@@ -1234,8 +1234,8 @@
     {
       "date": "2026-11-19",
       "nav": 0.999642,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 76202.72,
+      "asset_date": "2026-11-19",
       "wan_return": 1.46
     }
   ],
@@ -1355,8 +1355,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.002315,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 2004.63,
+      "asset_date": "2026-11-19",
       "wan_return": 0.68
     }
   ],
@@ -2070,8 +2070,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.001858,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 98658.66,
+      "asset_date": "2026-11-19",
       "wan_return": 1.37
     }
   ],
@@ -2394,8 +2394,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.006008,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 281300.27,
+      "asset_date": "2026-11-19",
       "wan_return": 1.03
     }
   ],
@@ -2473,25 +2473,18 @@
     {
       "date": "2026-11-19",
       "nav": 1.000235,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 9710.83,
+      "asset_date": "2026-11-19",
       "wan_return": 0.28
     }
   ],
   "YJ01251202A": [
     {
-      "date": "2026-08-19",
-      "nav": 1.009616,
-      "asset_size_wan": 770064.04,
-      "asset_date": "2026-08-19",
-      "wan_return": 0.0
-    },
-    {
       "date": "2026-08-20",
       "nav": 1.009661,
       "asset_size_wan": 765501.19,
       "asset_date": "2026-08-20",
-      "wan_return": 0.45
+      "wan_return": 0.0
     },
     {
       "date": "2026-08-21",
@@ -2898,6 +2891,13 @@
       "asset_size_wan": 183955.32,
       "asset_date": "2026-11-18",
       "wan_return": 0.51
+    },
+    {
+      "date": "2026-11-19",
+      "nav": 1.012157,
+      "asset_size_wan": 162988.84,
+      "asset_date": "2026-11-19",
+      "wan_return": 1.33
     }
   ],
   "YJ01260820A": [
@@ -3236,6 +3236,13 @@
       "asset_size_wan": 100.76,
       "asset_date": "2026-11-18",
       "wan_return": 21.25
+    },
+    {
+      "date": "2026-11-19",
+      "nav": 1.007791,
+      "asset_size_wan": 100.78,
+      "asset_date": "2026-11-19",
+      "wan_return": 2.08
     }
   ],
   "YJ01260506A": [
@@ -3585,8 +3592,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.008123,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 5028.45,
+      "asset_date": "2026-11-19",
       "wan_return": 0.52
     }
   ],
@@ -3734,8 +3741,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.003204,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 998.86,
+      "asset_date": "2026-11-19",
       "wan_return": 0.5
     }
   ],
@@ -3778,8 +3785,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.000059,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 9766.39,
+      "asset_date": "2026-11-19",
       "wan_return": 0.59
     }
   ],
@@ -3822,8 +3829,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.000059,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 9952.57,
+      "asset_date": "2026-11-19",
       "wan_return": 0.59
     }
   ],
@@ -4237,8 +4244,8 @@
     {
       "date": "2026-11-19",
       "nav": 1.011465,
-      "asset_size_wan": null,
-      "asset_date": null,
+      "asset_size_wan": 138640.7,
+      "asset_date": "2026-11-19",
       "wan_return": 0.62
     }
   ]
