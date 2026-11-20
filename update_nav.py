@@ -857,16 +857,71 @@ def create_product_card(
 
     latest_record = records[-1]
 
-    asset_size_wan = latest_record.get(
-        "asset_size_wan"
+    # 单位净值和资产净值可能不同步披露。
+    # 资产净值取最近一次有效披露，并与上一次有效披露比较。
+    asset_records_by_date = {}
+
+    for record in records:
+        asset_size = record.get("asset_size_wan")
+        if asset_size is None:
+            continue
+
+        asset_date = (
+            record.get("asset_date")
+            or record["date"]
+        )
+
+        asset_records_by_date[asset_date] = {
+            "asset_date": asset_date,
+            "asset_size_wan": float(asset_size),
+        }
+
+    asset_records = sorted(
+        asset_records_by_date.values(),
+        key=lambda item: item["asset_date"],
     )
 
-    if asset_size_wan is None:
+    if not asset_records:
         asset_size_text = "--"
+        asset_change_text = "暂无资产数据"
+        asset_change_class = "neutral"
+        asset_date_text = "--"
     else:
+        latest_asset_record = asset_records[-1]
+        latest_asset_size = latest_asset_record[
+            "asset_size_wan"
+        ]
         asset_size_text = (
-            f"{float(asset_size_wan):,.2f} 万"
+            f"{latest_asset_size:,.2f} 万"
         )
+        asset_date_text = latest_asset_record[
+            "asset_date"
+        ]
+
+        if len(asset_records) < 2:
+            asset_change_text = "暂无上期数据"
+            asset_change_class = "neutral"
+        else:
+            previous_asset_record = asset_records[-2]
+            asset_change = round(
+                latest_asset_size
+                - previous_asset_record["asset_size_wan"],
+                2,
+            )
+
+            if asset_change > 0:
+                asset_change_text = (
+                    f"较上期 +{asset_change:,.2f} 万"
+                )
+                asset_change_class = "positive"
+            elif asset_change < 0:
+                asset_change_text = (
+                    f"较上期 {asset_change:,.2f} 万"
+                )
+                asset_change_class = "negative"
+            else:
+                asset_change_text = "较上期 0.00 万"
+                asset_change_class = "neutral"
 
     wan_return = float(
         latest_record.get(
@@ -953,6 +1008,10 @@ def create_product_card(
           <div class="value">
             {asset_size_text}
           </div>
+
+          <div class="asset-change {asset_change_class}">
+            {asset_change_text}
+          </div>
         </div>
 
         <div class="metric">
@@ -999,7 +1058,7 @@ def create_product_card(
 
       <div class="nav-date">
         净值日期：{latest_record["date"]}
-        ｜资产日期：{latest_record.get("asset_date") or latest_record["date"]}
+        ｜资产日期：{asset_date_text}
       </div>
     </article>
     """
@@ -1193,6 +1252,12 @@ def render_index(
     .value {{
       font-size: 20px;
       font-weight: 750;
+    }}
+
+    .asset-change {{
+      margin-top: 5px;
+      font-size: 12px;
+      font-weight: 700;
     }}
 
     .positive {{
