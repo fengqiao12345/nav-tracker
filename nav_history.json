@@ -209,6 +209,13 @@
       "asset_size_wan": 234950.5,
       "asset_date": "2026-11-19",
       "wan_return": 0.45
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.002617,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.38
     }
   ],
   "YJ01260445A": [
@@ -526,6 +533,13 @@
       "asset_size_wan": 376944.08,
       "asset_date": "2026-11-19",
       "wan_return": 0.58
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.007239,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.4
     }
   ],
   "YJ01251204A": [
@@ -1237,6 +1251,13 @@
       "asset_size_wan": 76202.72,
       "asset_date": "2026-11-19",
       "wan_return": 1.46
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 0.999766,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 1.24
     }
   ],
   "YJ01260954A": [
@@ -1357,6 +1378,13 @@
       "nav": 1.002315,
       "asset_size_wan": 2004.63,
       "asset_date": "2026-11-19",
+      "wan_return": 0.68
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.002383,
+      "asset_size_wan": null,
+      "asset_date": null,
       "wan_return": 0.68
     }
   ],
@@ -2073,6 +2101,13 @@
       "asset_size_wan": 98658.66,
       "asset_date": "2026-11-19",
       "wan_return": 1.37
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.001978,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 1.2
     }
   ],
   "YJ01260819A": [
@@ -2397,6 +2432,13 @@
       "asset_size_wan": 281300.27,
       "asset_date": "2026-11-19",
       "wan_return": 1.03
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.006094,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.85
     }
   ],
   "YJ01260609A": [
@@ -2476,6 +2518,13 @@
       "asset_size_wan": 9710.83,
       "asset_date": "2026-11-19",
       "wan_return": 0.28
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.000285,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.5
     }
   ],
   "YJ01251202A": [
@@ -3595,6 +3644,13 @@
       "asset_size_wan": 5028.45,
       "asset_date": "2026-11-19",
       "wan_return": 0.52
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.008176,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.53
     }
   ],
   "YJ01260507A": [
@@ -3744,6 +3800,13 @@
       "asset_size_wan": 998.86,
       "asset_date": "2026-11-19",
       "wan_return": 0.5
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.003255,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.51
     }
   ],
   "YJ01261067A": [
@@ -3788,6 +3851,13 @@
       "asset_size_wan": 9766.39,
       "asset_date": "2026-11-19",
       "wan_return": 0.59
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.000108,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.49
     }
   ],
   "YJ01261068A": [
@@ -3832,6 +3902,13 @@
       "asset_size_wan": 9952.57,
       "asset_date": "2026-11-19",
       "wan_return": 0.59
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.000107,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.48
     }
   ],
   "YJ01260823A": [
@@ -4247,6 +4324,13 @@
       "asset_size_wan": 138640.7,
       "asset_date": "2026-11-19",
       "wan_return": 0.62
+    },
+    {
+      "date": "2026-11-20",
+      "nav": 1.01153,
+      "asset_size_wan": null,
+      "asset_date": null,
+      "wan_return": 0.64
     }
   ]
 }
